@@ -1,0 +1,621 @@
+/***************************************************************/
+/*       Tests for the context Model dynamics (ParamValue)     */
+/*                                                             */
+/* Felix Burgstaller                                           */
+/* Version: 0.3                                                */
+/* Date: 18.6.2017                                            */
+/*                                                             */
+/* This file contains the basic tests for parameter values     */
+/*                                                             */
+/***************************************************************/
+
+#include "StaticModel_detCtx.flr"
+
+//Predicates
+%testCtx_NOT(?bc) :- 'test.log'[open(append,?s)]@\io,?s[write('Test deleted values not accepted in query ')]@\io,?s[write(?bc)]@\io, ?s[write(':')]@\io,
+            \if ([]=setof{?i|ctx[id->?i]@m})
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.  
+
+//----------------------------------------
+%testCtx_delClosureSub_bc2_obstructionT:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc1_obstructionT: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_allFlightPhases_obstruction,aircraft_onground_closure,allInterests_allFlightPhases_allEventScenarios,helicopter_allFlightPhases_obstruction])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_delClosureSub_bc2_obstructionT:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc2_obstructionT: ')]@\io, 
+			\if (highlyImportant, \naf littleImportant, relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_delClosureSub_bc2_obstructionC:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc2_obstructionC: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_allFlightPhases_obstruction,aircraft_onground_closure,allInterests_allFlightPhases_allEventScenarios,helicopter_allFlightPhases_obstruction])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_delClosureSub_bc2_obstructionC:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc2_obstructionC: ')]@\io, 
+			\if (highlyImportant, \naf littleImportant, relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_delClosureSub_bc2_specialPort:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc2_specialPort: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_onground_closure,allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_delClosureSub_bc2_specialPort:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc2_specialPort: ')]@\io, 
+			\if (\naf highlyImportant, \naf littleImportant, relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_delClosureSub_bc3_aeroBeacon:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc3_aeroBeacon: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_delClosureSub_bc3_aeroBeacon:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc3_aeroBeacon: ')]@\io, 
+			\if (\naf highlyImportant, \naf littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_delClosureSub_bc3_aeroEquip:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc3_aeroEquip: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_delClosureSub_bc3_aeroEquip:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc3_aeroEquip: ')]@\io, 
+			\if (\naf highlyImportant, \naf littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+
+//----------------------------------------
+%testCtx_delClosure_bc1:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc1: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[allInterests_allFlightPhases_allEventScenarios,landplane_onground_runwayClosure])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_delClosure_bc1:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc1: ')]@\io, 
+			\if (\naf relevant, \naf highlyImportant, littleImportant)@m
+			\then ?s[writeln('+++success+++')]@\io
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_delClosure_bc1_apronCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc1_apronCl: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_delClosure_bc1_apronCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc1_apronCl: ')]@\io, 
+			\if (\naf relevant, \naf highlyImportant, \naf littleImportant)@m
+			\then ?s[writeln('+++success+++')]@\io
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_delClosure_bc1_rwyCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc1_rwyCl: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[allInterests_allFlightPhases_allEventScenarios,landplane_onground_runwayClosure])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_delClosure_bc1_rwyCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc1_rwyCl: ')]@\io, 
+			\if (highlyImportant, \naf littleImportant,\naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_delClosure_bc2_apronCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc2_apronCl: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_delClosure_bc2_apronCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc2_apronCl: ')]@\io, 
+			\if (\naf relevant, \naf highlyImportant, \naf littleImportant)@m
+			\then ?s[writeln('+++success+++')]@\io
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_delClosure_bc2_rwyCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc2_rwyCl: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_delClosure_bc2_rwyCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc2_rwyCl: ')]@\io, 
+			\if (\naf highlyImportant, \naf littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+
+//----------------------------------------
+%testCtx_obstClosure_bc1_obstructionT:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc1_obstructionT: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_allFlightPhases_obstruction,aircraft_onground_closure,allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_obstClosure_bc1_obstructionT:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc1_obstructionT: ')]@\io, 
+			\if (\naf highlyImportant, littleImportant, relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_obstClosure_bc1_obstructionC:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc1_obstructionC: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_allFlightPhases_obstruction,aircraft_onground_closure,allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_obstClosure_bc1_obstructionC:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc1_obstructionC: ')]@\io, 
+			\if (highlyImportant, \naf littleImportant, relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+
+%testCtx_obstClosure_bc2_obstructionT:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc2_obstructionT: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_allFlightPhases_obstruction,aircraft_onground_closure,allInterests_allFlightPhases_allEventScenarios,helicopter_allFlightPhases_obstruction])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_obstClosure_bc2_obstructionT:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc2_obstructionT: ')]@\io, 
+			\if (highlyImportant, \naf littleImportant, relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_obstClosure_bc2_obstructionC:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc2_obstructionC: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_allFlightPhases_obstruction,aircraft_onground_closure,allInterests_allFlightPhases_allEventScenarios,helicopter_allFlightPhases_obstruction])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_obstClosure_bc2_obstructionC:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc2_obstructionC: ')]@\io, 
+			\if (highlyImportant, \naf littleImportant, relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+//-----------------------------------------------------------------------------------------------
+// TESTS --- Add and delete parameter value
+?- File[chdir('/opt/Flora-2/flora2')]@\io.
+?- ['OO/ctxModelAIM.flr'>>ctxModel],['OO/bc'>>bc]. 
+
+?- \if isloaded{m} \then erasemodule{m} \else newmodule{m}.
+?- setwarnings{off}.
+
+?- 'test.log'[open(append,?s)]@\io,
+     ?s[writeln('----------------------------------------------')]@\io,
+     ?s[writeln('Testing Parameter Values (add/delete)')]@\io, ?s[close]@\io.
+?- \dateTime[now->?n]@\basetype, 'test.log'[open(append,?s)]@\io,?s[writeln(?n)]@\io, ?s[writeln('----------------------------------------------')]@\io, ?s[close]@\io.
+
+// TEST --- addValueLeaf
+?- 'test.log'[open(append,?s)]@\io,?s[writeln('')]@\io,?s[writeln('######TEST adding leaf parameter value aerodrome to aera:')]@\io, ?s[close]@\io.
+?- AIMCtx[%addValueLeaf(area,aerodrome)]@ctxModel.
+?- 'test.log'[open(append,?s)]@\io,?s[write('Test leaf value added:')]@\io,
+            \if (aerodrome:Interest@ctxModel)
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+?- 'test.log'[open(append,?s)]@\io,?s[write('Test leaf value covers:')]@\io,
+			\if (setof{?cov|area[covers->?cov]}@ctxModel=[aerodrome, area])
+		    \then ?s[writeln('+++success+++')]@\io 
+		    \else ?s[writeln('+++FAIL+++')]@\io, 
+		    ?s[close]@\io.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1,m,?ctxf)]@ctxModel.
+?- %testCtx_bc1.
+?- %testResult_bc1.
+?- SemNOTAMCase[%newBC(${bc1_apronCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_apronClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_apronCl,m,?ctxf)]@ctxModel.
+?- %testCtx_bc1_apronCl.
+?- %testResult_bc1_apronCl.
+?- SemNOTAMCase[%newBC(${bc1_rwyCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_rwyCl,m,?ctxf)]@ctxModel.
+?- %testCtx_bc1_rwyCl.
+?- %testResult_bc1_rwyCl.
+?- SemNOTAMCase[%newBC(${bc2_obstructionT:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionT]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_obstructionT,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_obstructionT.
+?- %testResult_bc2_obstructionT.
+?- SemNOTAMCase[%newBC(${bc2_obstructionC:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionC]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_obstructionC,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_obstructionC.
+?- %testResult_bc2_obstructionC.
+?- SemNOTAMCase[%newBC(${bc2_specialPort:SemNOTAMCase[interestSpec->iSpec2,notam->n_specialPort]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_specialPort,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_specialPort.
+?- %testResult_bc2_specialPort.
+?- SemNOTAMCase[%newBC(${bc3_aeroBeacon:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroBeacon]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_aeroBeacon,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_aeroBeacon.
+?- %testResult_bc3_aeroBeacon.
+?- SemNOTAMCase[%newBC(${bc3_aeroEquip:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroEquip]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_aeroEquip,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_aeroEquip.
+?- %testResult_bc3_aeroEquip.
+
+		
+// TEST --- addValueNode
+?- 'test.log'[open(append,?s)]@\io,?s[writeln('')]@\io,?s[writeln('######TEST adding node parameter value specifiedAircraft under aircraft with landplane,seaplane,helicopter as children:')]@\io, ?s[close]@\io.
+?- AIMCtx[%addValueNode(aircraft,specifiedAircraft,{landplane,seaplane,helicopter})]@ctxModel.
+?- 'test.log'[open(append,?s)]@\io,?s[write('Test node value added:')]@\io,
+            \if (specifiedAircraft:Interest@ctxModel)
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+?- 'test.log'[open(append,?s)]@\io,?s[write('Test node value covers:')]@\io,
+            \if ([aircraft,allInterests,specifiedAircraft]=setof{?covBy|?covBy[covers->specifiedAircraft]@ctxModel},
+				 [helicopter,landplane,seaplane,specifiedAircraft]=setof{?cov|specifiedAircraft[covers->?cov]@ctxModel})
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+?- SemNOTAMCase[%newBC(${bc1:SemNOTAMCase[interestSpec->iSpec1,notam->n1]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1,m,?ctxf)]@ctxModel.
+?- %testCtx_bc1.
+?- %testResult_bc1.
+?- SemNOTAMCase[%newBC(${bc1_apronCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_apronClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_apronCl,m,?ctxf)]@ctxModel.
+?- %testCtx_bc1_apronCl.
+?- %testResult_bc1_apronCl.
+?- SemNOTAMCase[%newBC(${bc1_rwyCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_rwyCl,m,?ctxf)]@ctxModel.
+?- %testCtx_bc1_rwyCl.
+?- %testResult_bc1_rwyCl.
+?- SemNOTAMCase[%newBC(${bc2_obstructionT:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionT]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_obstructionT,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_obstructionT.
+?- %testResult_bc2_obstructionT.
+?- SemNOTAMCase[%newBC(${bc2_obstructionC:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionC]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_obstructionC,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_obstructionC.
+?- %testResult_bc2_obstructionC.
+?- SemNOTAMCase[%newBC(${bc2_specialPort:SemNOTAMCase[interestSpec->iSpec2,notam->n_specialPort]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_specialPort,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_specialPort.
+?- %testResult_bc2_specialPort.
+?- SemNOTAMCase[%newBC(${bc3_aeroBeacon:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroBeacon]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_aeroBeacon,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_aeroBeacon.
+?- %testResult_bc3_aeroBeacon.
+?- SemNOTAMCase[%newBC(${bc3_aeroEquip:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroEquip]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_aeroEquip,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_aeroEquip.
+?- %testResult_bc3_aeroEquip.
+ 
+
+// TEST --- addValueRoot
+?- 'test.log'[open(append,?s)]@\io,?s[writeln('')]@\io,?s[writeln('######TEST adding root parameter value events to parameter EventScenario:')]@\io, ?s[close]@\io.
+?- AIMCtx[%addValueRoot(events,allEventScenarios)]@ctxModel.
+?- 'test.log'[open(append,?s)]@\io,?s[write('Test root value added:')]@\io,
+            \if (events:EventScenario@ctxModel)
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+?- 'test.log'[open(append,?s)]@\io,?s[write('Test root value covers:')]@\io,
+            \if ([allEventScenarios,events]=setof{?covBy|?covBy[covers->allEventScenarios]@ctxModel},
+				 [aerodromeBeaconStatus,aerodromeEquipment,allEventScenarios,apronClosure,closure,events,heliport,obstruction,runwayClosure,specialPort,waterlaneSki]=setof{?cov|events[covers->?cov]@ctxModel})
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+?- SemNOTAMCase[%newBC(${bc1:SemNOTAMCase[interestSpec->iSpec1,notam->n1]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1,m,?ctxf)]@ctxModel.
+?- %testCtx_bc1.
+?- %testResult_bc1.
+?- SemNOTAMCase[%newBC(${bc1_apronCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_apronClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_apronCl,m,?ctxf)]@ctxModel.
+?- %testCtx_bc1_apronCl.
+?- %testResult_bc1_apronCl.
+?- SemNOTAMCase[%newBC(${bc1_rwyCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_rwyCl,m,?ctxf)]@ctxModel.
+?- %testCtx_bc1_rwyCl.
+?- %testResult_bc1_rwyCl.
+?- SemNOTAMCase[%newBC(${bc2_obstructionT:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionT]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_obstructionT,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_obstructionT.
+?- %testResult_bc2_obstructionT.
+?- SemNOTAMCase[%newBC(${bc2_obstructionC:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionC]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_obstructionC,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_obstructionC.
+?- %testResult_bc2_obstructionC.
+?- SemNOTAMCase[%newBC(${bc2_specialPort:SemNOTAMCase[interestSpec->iSpec2,notam->n_specialPort]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_specialPort,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_specialPort.
+?- %testResult_bc2_specialPort.
+?- SemNOTAMCase[%newBC(${bc3_aeroBeacon:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroBeacon]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_aeroBeacon,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_aeroBeacon.
+?- %testResult_bc3_aeroBeacon.
+?- SemNOTAMCase[%newBC(${bc3_aeroEquip:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroEquip]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_aeroEquip,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_aeroEquip.
+?- %testResult_bc3_aeroEquip.
+
+
+// TEST --- DeleteSubGraph & delete Ctx
+?- writeln('_______________________________-')@\plg.
+?- File[chdir('/opt/Flora-2/flora2')]@\io.
+?- ['OO/ctxModelAIM.flr'>>ctxModel],['OO/bc'>>bc]. 
+?- erasemodule{m}.
+
+?- 'test.log'[open(append,?s)]@\io,?s[writeln('')]@\io,?s[writeln('######TEST del parameter value closure subgraph & delete context using these values')]@\io, ?s[close]@\io.
+?- AIMCtx[%delValueSubGraph(closure)]@ctxModel.
+?- 'test.log'[open(append,?s)]@\io,?s[write('Test subgraph deleted:')]@\io,
+            \if ([aerodromeBeaconStatus,aerodromeEquipment,allEventScenarios,heliport,obstruction,specialPort,waterlaneSki]=setof{?s|?s:EventScenario@ctxModel}, 
+				 (\naf ?[covers->runwayClosure], \naf ?[covers->apronClosure])@ctxModel)
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+
+?- AIMCtx[%delCtxByValue]@ctxModel.
+?- 'test.log'[open(append,?s)]@\io,?s[write('Test ctx deleted:')]@\io,
+            \if ([aircraft_allFlightPhases_obstruction,aircraft_onground_aerodromeEquipment,allInterests_allFlightPhases_allEventScenarios,helicopter_allFlightPhases_obstruction,landplane_allFlightPhases_aerodromeBeaconStatus,landplane_allFlightPhases_specialPort]=setof{?ctx|?ctx:AIMCtx}@ctxModel,
+				 \naf aircraft_onground_closure[],\naf landplane_onground_runwayClosure[])@ctxModel
+   			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+
+?- SemNOTAMCase[%newBC(${bc1:SemNOTAMCase[interestSpec->iSpec1,notam->n1]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1,m,?ctxf)]@ctxModel.
+?- %testCtx_NOT(bc1).
+?- SemNOTAMCase[%newBC(${bc1_apronCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_apronClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_apronCl,m,?ctxf)]@ctxModel.
+?- %testCtx_NOT(bc1_apronCl).
+?- SemNOTAMCase[%newBC(${bc1_rwyCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_rwyCl,m,?ctxf)]@ctxModel.
+?- %testCtx_NOT(b1_rwyCl).
+?- SemNOTAMCase[%newBC(${bc2_apronCl:SemNOTAMCase[interestSpec->iSpec2,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_rwyCl,m,?ctxf)]@ctxModel.
+?- %testCtx_NOT(bc2_apronCl).
+?- SemNOTAMCase[%newBC(${bc2_rwyCl:SemNOTAMCase[interestSpec->iSpec2,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_rwyCl,m,?ctxf)]@ctxModel.
+?- %testCtx_NOT(bc2_rwyCl).
+?- SemNOTAMCase[%newBC(${bc2_obstructionT:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionT]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_obstructionT,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_obstructionT.
+?- %testResult_bc2_obstructionT.
+?- SemNOTAMCase[%newBC(${bc2_obstructionC:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionC]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_obstructionC,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_obstructionC.
+?- %testResult_bc2_obstructionC.
+?- SemNOTAMCase[%newBC(${bc2_specialPort:SemNOTAMCase[interestSpec->iSpec2,notam->n_specialPort]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_specialPort,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_specialPort.
+?- %testResult_bc2_specialPort.
+?- SemNOTAMCase[%newBC(${bc3_aeroBeacon:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroBeacon]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_aeroBeacon,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_aeroBeacon.
+?- %testResult_bc3_aeroBeacon.
+?- SemNOTAMCase[%newBC(${bc3_aeroEquip:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroEquip]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_aeroEquip,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_aeroEquip.
+?- %testResult_bc3_aeroEquip.
+
+
+// TEST --- DeleteSubGraph & modify Ctx
+?- File[chdir('/opt/Flora-2/flora2')]@\io. 
+?- ['OO/ctxModelAIM.flr'>>ctxModel],['OO/bc'>>bc]. 
+?- erasemodule{m}.
+
+?- 'test.log'[open(append,?s)]@\io,?s[writeln('')]@\io,?s[writeln('######TEST del parameter value closure subgraph & modify context using closure to allEventScenarios')]@\io, ?s[close]@\io.
+?- AIMCtx[%delValueSubGraph(closure)]@ctxModel.
+?- 'test.log'[open(append,?s)]@\io,?s[write('Test subgraph deleted:')]@\io,
+            \if ([aerodromeBeaconStatus,aerodromeEquipment,allEventScenarios,heliport,obstruction,specialPort,waterlaneSki]=setof{?s|?s:EventScenario@ctxModel}, 
+				 (\naf ?[covers->runwayClosure], \naf ?[covers->apronClosure])@ctxModel)
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+
+?- AIMCtx[%modCtxByValue(closure,allEventScenarios,?ctx)]@ctxModel.
+?- AIMCtx[%delCtxByValue]@ctxModel.
+?- 'test.log'[open(append,?s)]@\io,?s[write('Test ctx deleted:')]@\io,
+             \if ([aircraft_allFlightPhases_obstruction,aircraft_onground_aerodromeEquipment,aircraft_onground_closure,allInterests_allFlightPhases_allEventScenarios,helicopter_allFlightPhases_obstruction,landplane_allFlightPhases_aerodromeBeaconStatus,landplane_allFlightPhases_specialPort]=setof{?ctx|?ctx:AIMCtx}@ctxModel,
+				 \naf landplane_onground_runwayClosure[])@ctxModel
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+
+?- SemNOTAMCase[%newBC(${bc1:SemNOTAMCase[interestSpec->iSpec1,notam->n1]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1,m,?ctxf)]@ctxModel.
+?- %testCtx_NOT(bc1).
+?- SemNOTAMCase[%newBC(${bc1_apronCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_apronClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_apronCl,m,?ctxf)]@ctxModel.
+?- %testCtx_NOT(bc1_apronCl).
+?- SemNOTAMCase[%newBC(${bc1_rwyCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_rwyCl,m,?ctxf)]@ctxModel.
+?- %testCtx_NOT(b1_rwyCl).
+?- SemNOTAMCase[%newBC(${bc2_apronCl:SemNOTAMCase[interestSpec->iSpec2,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_rwyCl,m,?ctxf)]@ctxModel.
+?- %testCtx_NOT(bc2_apronCl).
+?- SemNOTAMCase[%newBC(${bc2_rwyCl:SemNOTAMCase[interestSpec->iSpec2,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_rwyCl,m,?ctxf)]@ctxModel.
+?- %testCtx_NOT(bc2_rwyCl).
+?- SemNOTAMCase[%newBC(${bc2_obstructionT:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionT]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_obstructionT,m,?ctxf)]@ctxModel.
+?- %testCtx_delClosureSub_bc2_obstructionT.
+?- %testResult_delClosureSub_bc2_obstructionT.
+?- SemNOTAMCase[%newBC(${bc2_obstructionC:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionC]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_obstructionC,m,?ctxf)]@ctxModel.
+?- %testCtx_delClosureSub_bc2_obstructionC.
+?- %testResult_delClosureSub_bc2_obstructionC.
+?- SemNOTAMCase[%newBC(${bc2_specialPort:SemNOTAMCase[interestSpec->iSpec2,notam->n_specialPort]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_specialPort,m,?ctxf)]@ctxModel.
+?- %testCtx_delClosureSub_bc2_specialPort.
+?- %testResult_delClosureSub_bc2_specialPort.
+?- SemNOTAMCase[%newBC(${bc3_aeroBeacon:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroBeacon]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_aeroBeacon,m,?ctxf)]@ctxModel.
+?- %testCtx_delClosureSub_bc3_aeroBeacon.
+?- %testResult_delClosureSub_bc3_aeroBeacon.
+?- SemNOTAMCase[%newBC(${bc3_aeroEquip:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroEquip]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_aeroEquip,m,?ctxf)]@ctxModel.
+?- %testCtx_delClosureSub_bc3_aeroEquip.
+?- %testResult_delClosureSub_bc3_aeroEquip.
+
+
+// TEST --- DeleteVal & delete Ctx
+?-File[chdir('/opt/Flora-2/flora2')]@\io.
+?- ['OO/ctxModelAIM.flr'>>ctxModel],['OO/bc'>>bc]. 
+?-erasemodule{m}.
+
+?- 'test.log'[open(append,?s)]@\io,?s[writeln('')]@\io,?s[writeln('######TEST del parameter value closure & delete context using closure')]@\io, ?s[close]@\io.
+?- AIMCtx[%delValue(closure,?parent)]@ctxModel.
+?- 'test.log'[open(append,?s)]@\io,?s[write('Test value deleted:')]@\io,
+              \if ([aerodromeBeaconStatus,aerodromeEquipment,allEventScenarios,apronClosure,heliport,obstruction,runwayClosure,specialPort,waterlaneSki]=setof{?s|?s:EventScenario@ctxModel}, 
+				 (\naf closure:EventScenario)@ctxModel)
+		
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+
+?- AIMCtx[%delCtxByValue]@ctxModel.
+?- 'test.log'[open(append,?s)]@\io,?s[write('Test ctx deleted:')]@\io,
+            \if ([aircraft_allFlightPhases_obstruction,aircraft_onground_aerodromeEquipment,allInterests_allFlightPhases_allEventScenarios,helicopter_allFlightPhases_obstruction,landplane_allFlightPhases_aerodromeBeaconStatus,landplane_allFlightPhases_specialPort,landplane_onground_runwayClosure]=setof{?ctx|?ctx:AIMCtx}@ctxModel,
+				 \naf aircraft_onground_closure[])@ctxModel
+   			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+
+?- SemNOTAMCase[%newBC(${bc1:SemNOTAMCase[interestSpec->iSpec1,notam->n1]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1,m,?ctxf)]@ctxModel.
+?- %testCtx_delClosure_bc1.
+?- %testResult_delClosure_bc1.
+?- SemNOTAMCase[%newBC(${bc1_apronCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_apronClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_apronCl,m,?ctxf)]@ctxModel.
+?- %testCtx_delClosure_bc1_apronCl.
+?- %testResult_delClosure_bc1_apronCl.
+?- SemNOTAMCase[%newBC(${bc1_rwyCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_rwyCl,m,?ctxf)]@ctxModel.
+?- %testCtx_delClosure_bc1_rwyCl.
+?- %testResult_delClosure_bc1_rwyCl.
+?- SemNOTAMCase[%newBC(${bc2_apronCl:SemNOTAMCase[interestSpec->iSpec2,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_apronCl,m,?ctxf)]@ctxModel.
+?- %testCtx_delClosure_bc2_apronCl.
+?- %testResult_delClosure_bc2_apronCl.
+?- SemNOTAMCase[%newBC(${bc2_rwyCl:SemNOTAMCase[interestSpec->iSpec2,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_rwyCl,m,?ctxf)]@ctxModel.
+?- %testCtx_delClosure_bc2_rwyCl.
+?- %testResult_delClosure_bc2_rwyCl.
+?- SemNOTAMCase[%newBC(${bc2_obstructionT:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionT]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_obstructionT,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_obstructionT.
+?- %testResult_bc2_obstructionT.
+?- SemNOTAMCase[%newBC(${bc2_obstructionC:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionC]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_obstructionC,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_obstructionC.
+?- %testResult_bc2_obstructionC.
+?- SemNOTAMCase[%newBC(${bc2_specialPort:SemNOTAMCase[interestSpec->iSpec2,notam->n_specialPort]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_specialPort,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_specialPort.
+?- %testResult_bc2_specialPort.
+?- SemNOTAMCase[%newBC(${bc3_aeroBeacon:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroBeacon]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_aeroBeacon,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_aeroBeacon.
+?- %testResult_bc3_aeroBeacon.
+?- SemNOTAMCase[%newBC(${bc3_aeroEquip:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroEquip]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_aeroEquip,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_aeroEquip.
+?- %testResult_bc3_aeroEquip.
+
+
+// TEST --- DeleteVal & modify Ctx
+?-File[chdir('/opt/Flora-2/flora2')]@\io.
+?- ['OO/ctxModelAIM.flr'>>ctxModel],['OO/bc'>>bc]. 
+?-erasemodule{m}.
+
+?- 'test.log'[open(append,?s)]@\io,?s[writeln('')]@\io,?s[writeln('######TEST del parameter value closure & modify context using closure to obstruction')]@\io, ?s[close]@\io.
+?- AIMCtx[%delValue(closure,?parent)]@ctxModel.
+?- 'test.log'[open(append,?s)]@\io,?s[write('Test value deleted:')]@\io,
+              \if ([aerodromeBeaconStatus,aerodromeEquipment,allEventScenarios,apronClosure,heliport,obstruction,runwayClosure,specialPort,waterlaneSki]=setof{?s|?s:EventScenario@ctxModel}, 
+				 (\naf closure:EventScenario)@ctxModel)
+		
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+
+//not actually meaningful, technical test
+?- AIMCtx[%modCtxByValue(closure,obstruction,?ctx)]@ctxModel.
+?- AIMCtx[%delCtxByValue]@ctxModel.
+?- 'test.log'[open(append,?s)]@\io,?s[write('Test ctx deleted:')]@\io,
+            \if ([aircraft_allFlightPhases_obstruction,aircraft_onground_aerodromeEquipment,aircraft_onground_closure,allInterests_allFlightPhases_allEventScenarios,helicopter_allFlightPhases_obstruction,landplane_allFlightPhases_aerodromeBeaconStatus,landplane_allFlightPhases_specialPort,landplane_onground_runwayClosure]=setof{?ctx|?ctx:AIMCtx}@ctxModel)
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+
+?- SemNOTAMCase[%newBC(${bc1:SemNOTAMCase[interestSpec->iSpec1,notam->n1]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1,m,?ctxf)]@ctxModel.
+?- %testCtx_delClosure_bc1.
+?- %testResult_delClosure_bc1.
+?- SemNOTAMCase[%newBC(${bc1_apronCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_apronClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_apronCl,m,?ctxf)]@ctxModel.
+?- %testCtx_delClosure_bc1_apronCl.
+?- %testResult_delClosure_bc1_apronCl.
+?- SemNOTAMCase[%newBC(${bc1_rwyCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_rwyCl,m,?ctxf)]@ctxModel.
+?- %testCtx_delClosure_bc1_rwyCl.
+?- %testResult_delClosure_bc1_rwyCl.
+?- SemNOTAMCase[%newBC(${bc2_apronCl:SemNOTAMCase[interestSpec->iSpec2,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_apronCl,m,?ctxf)]@ctxModel.
+?- %testCtx_delClosure_bc2_apronCl.
+?- %testResult_delClosure_bc2_apronCl.
+?- SemNOTAMCase[%newBC(${bc2_rwyCl:SemNOTAMCase[interestSpec->iSpec2,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_rwyCl,m,?ctxf)]@ctxModel.
+?- %testCtx_delClosure_bc2_rwyCl.
+?- %testResult_delClosure_bc2_rwyCl.
+
+?- SemNOTAMCase[%newBC(${bc1_obstructionT:SemNOTAMCase[interestSpec->iSpec1,notam->n_obstructionT]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_obstructionT,m,?ctxf)]@ctxModel.
+?- %testCtx_obstClosure_bc1_obstructionT.
+?- %testResult_obstClosure_bc1_obstructionT.
+?- SemNOTAMCase[%newBC(${bc1_obstructionC:SemNOTAMCase[interestSpec->iSpec1,notam->n_obstructionC]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_obstructionC,m,?ctxf)]@ctxModel.
+?- %testCtx_obstClosure_bc1_obstructionC.
+?- %testResult_obstClosure_bc1_obstructionC.
+?- SemNOTAMCase[%newBC(${bc2_obstructionT:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionT]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_obstructionT,m,?ctxf)]@ctxModel.
+?- %testCtx_obstClosure_bc2_obstructionT.
+?- %testResult_obstClosure_bc2_obstructionT.
+?- SemNOTAMCase[%newBC(${bc2_obstructionC:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionC]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_obstructionC,m,?ctxf)]@ctxModel.
+?- %testCtx_obstClosure_bc2_obstructionC.
+?- %testResult_obstClosure_bc2_obstructionC.
+
+?- SemNOTAMCase[%newBC(${bc2_specialPort:SemNOTAMCase[interestSpec->iSpec2,notam->n_specialPort]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_specialPort,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_specialPort.
+?- %testResult_bc2_specialPort.
+?- SemNOTAMCase[%newBC(${bc3_aeroBeacon:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroBeacon]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_aeroBeacon,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_aeroBeacon.
+?- %testResult_bc3_aeroBeacon.
+?- SemNOTAMCase[%newBC(${bc3_aeroEquip:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroEquip]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_aeroEquip,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_aeroEquip.
+?- %testResult_bc3_aeroEquip.
+
+
+// ---TEST modify
+?- 'test.log'[open(append,?s)]@\io,?s[writeln('')]@\io,?s[writeln('######TEST modifying Parameter value:')]@\io, ?s[close]@\io.
+?- 'test.log'[open(append,?s)]@\io,?s[writeln('Changing parameter value name: delete and insert. Changing covers: deleting/disabling fact and inserting new fact -> TRIVIAL')]@\io, ?s[close].
+
+
+
+?- 'test.log'[open(append,?s)]@\io,
+     ?s[writeln('----------------------------------------------')]@\io,
+     ?s[writeln('                  END TEST                    ')]@\io, ?s[close]@\io.
+?- \dateTime[now->?n]@\basetype, 'test.log'[open(append,?s)]@\io,?s[writeln(?n)]@\io, 
+     ?s[writeln('----------------------------------------------')]@\io, ?s[close]@\io.

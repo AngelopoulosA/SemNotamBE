@@ -1,0 +1,306 @@
+/***************************************************************/
+/*         A supplementary file for tests                      */
+/*                                                             */
+/* Felix Burgstaller                                           */
+/* Version: 0.4                                                */
+/* Date: 18.07.2017                                            */
+/*                                                             */
+/* Tests whether correct contexts and rules have been loaded   */
+/*                                                             */
+/***************************************************************/
+//Included in other tests
+/////////////Contexts
+%testCtx_bc1:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc1: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_onground_closure,allInterests_allFlightPhases_allEventScenarios,landplane_onground_runwayClosure])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc1_apronCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc1_apronCl: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_onground_closure,allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc1_rwyCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc1_rwyCl: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_onground_closure,allInterests_allFlightPhases_allEventScenarios,landplane_onground_runwayClosure])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc1_obstructionT:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc1_obstructionT: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_allFlightPhases_obstruction,allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc1_obstructionC:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc1_obstructionC: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_allFlightPhases_obstruction,allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc1_specialPort:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc1_specialPort: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[allInterests_allFlightPhases_allEventScenarios,landplane_allFlightPhases_specialPort])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc1_aeroBeacon:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc1_aeroBeacon: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[allInterests_allFlightPhases_allEventScenarios,landplane_allFlightPhases_aerodromeBeaconStatus])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc1_aeroEquip:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc1_aeroEquip: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_onground_aerodromeEquipment,allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+//bc2
+%testCtx_bc2:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc2: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_onground_closure,allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc2_apronCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc2_apronCl: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_onground_closure,allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc2_rwyCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc2_rwyCl: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_onground_closure,allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc2_obstructionT:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc2_obstructionT: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_allFlightPhases_obstruction,allInterests_allFlightPhases_allEventScenarios,helicopter_allFlightPhases_obstruction])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc2_obstructionC:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc2_obstructionC: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_allFlightPhases_obstruction,allInterests_allFlightPhases_allEventScenarios,helicopter_allFlightPhases_obstruction])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc2_specialPort:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc2_specialPort: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc2_aeroBeacon:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc2_aeroBeacon: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc2_aeroEquip:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc2_aeroEquip: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_onground_aerodromeEquipment,allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+//bc3
+%testCtx_bc3:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc3: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc3_apronCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc3_apronCl: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc3_rwyCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc3_rwyCl: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc3_obstructionT:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc3_obstructionT: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_allFlightPhases_obstruction,allInterests_allFlightPhases_allEventScenarios,helicopter_allFlightPhases_obstruction])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc3_obstructionC:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc3_obstructionC: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[aircraft_allFlightPhases_obstruction,allInterests_allFlightPhases_allEventScenarios,helicopter_allFlightPhases_obstruction])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc3_specialPort:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc3_specialPort: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc3_aeroBeacon:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc3_aeroBeacon: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testCtx_bc3_aeroEquip:-'test.log'[open(append,?s)]@\io,?s[write('Test Ctxs bc3_aeroEquip: ')]@\io, 
+			\if (?set=setof{?i|ctx[id->?i]@m},?set=[allInterests_allFlightPhases_allEventScenarios])
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+
+
+/////////////Results
+%testResult_bc1:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc1: ')]@\io, 
+			\if (littleImportant, relevant, \naf highlyImportant)@m
+			\then ?s[writeln('+++success+++')]@\io
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc1_apronCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc1_apronCl: ')]@\io, 
+			\if (relevant, \naf highlyImportant, \naf littleImportant)@m
+			\then ?s[writeln('+++success+++')]@\io
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc1_rwyCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc1_rwyCl: ')]@\io, 
+			\if (highlyImportant, \naf littleImportant,relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc1_obstructionT:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc1_obstructionT: ')]@\io, 
+			\if (\naf highlyImportant, littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc1_obstructionC:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc1_obstructionC: ')]@\io, 
+			\if (highlyImportant, \naf littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc1_specialPort:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc1_specialPort: ')]@\io, 
+			\if (\naf highlyImportant, littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc1_aeroBeacon:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc1_aeroBeacon: ')]@\io, 
+			\if (highlyImportant, \naf littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc1_aeroEquip:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc1_aeroEquip: ')]@\io, 
+			\if (highlyImportant, \naf littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+//bc2
+%testResult_bc2:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc2: ')]@\io, 
+			\if (\naf littleImportant, relevant, \naf highlyImportant)@m
+			\then ?s[writeln('+++success+++')]@\io
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc2_apronCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc2_apronCl: ')]@\io, 
+			\if (relevant, \naf highlyImportant, \naf littleImportant)@m
+			\then ?s[writeln('+++success+++')]@\io
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc2_rwyCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc2_rwyCl: ')]@\io, 
+			\if (\naf highlyImportant, \naf littleImportant,relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc2_obstructionT:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc2_obstructionT: ')]@\io, 
+			\if (highlyImportant, \naf littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc2_obstructionC:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc2_obstructionC: ')]@\io, 
+			\if (highlyImportant, \naf littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc2_specialPort:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc2_specialPort: ')]@\io, 
+			\if (\naf highlyImportant, \naf littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc2_aeroBeacon:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc2_aeroBeacon: ')]@\io, 
+			\if (\naf highlyImportant, \naf littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc2_aeroEquip:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc2_aeroEquip: ')]@\io, 
+			\if (highlyImportant, \naf littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+//bc3
+%testResult_bc3:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc3: ')]@\io, 
+			\if (\naf littleImportant, \naf relevant, \naf highlyImportant)@m
+			\then ?s[writeln('+++success+++')]@\io
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc3_apronCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc3_apronCl: ')]@\io, 
+			\if (\naf relevant, \naf highlyImportant, \naf littleImportant)@m
+			\then ?s[writeln('+++success+++')]@\io
+			\else ?s[writeln('---FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc3_rwyCl:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc3_rwyCl: ')]@\io, 
+			\if (\naf highlyImportant, \naf littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc3_obstructionT:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc3_obstructionT: ')]@\io, 
+			\if (highlyImportant, \naf littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc3_obstructionC:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc3_obstructionC: ')]@\io, 
+			\if (highlyImportant, \naf littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc3_specialPort:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc3_specialPort: ')]@\io, 
+			\if (\naf highlyImportant, \naf littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc3_aeroBeacon:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc3_aeroBeacon: ')]@\io, 
+			\if (\naf highlyImportant, \naf littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+%testResult_bc3_aeroEquip:-'test.log'[open(append,?s)]@\io,?s[write('Test Res. bc3_aeroEquip: ')]@\io, 
+			\if (\naf highlyImportant, \naf littleImportant, \naf relevant)@m
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
