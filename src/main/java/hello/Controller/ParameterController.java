@@ -26,8 +26,8 @@ public class ParameterController {
 	public @ResponseBody
     List<String> getAllParameters () {
         try {
-            CBRInterface fl = new CBRInterface("C:/TEMP/dke/flora2/CBRM/ctxModelAIM.flr",
-                    "C:/TEMP/dke/flora2/CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
+            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
+                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
             fl.setDebug(false);
             return fl.getParameters();
         } catch (IOException e) {
@@ -39,8 +39,8 @@ public class ParameterController {
     public @ResponseBody
     ParameterValue getParameterDetails (@PathVariable(value="id") String id) {
         try {
-            CBRInterface fl = new CBRInterface("C:/TEMP/dke/flora2/CBRM/ctxModelAIM.flr",
-                    "C:/TEMP/dke/flora2/CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
+            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
+                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
             fl.setDebug(false);
             List<String[]> rawParamValuesHierarchy = fl.getParameterValuesHiearchy(id);
 

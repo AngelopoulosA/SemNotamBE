@@ -25,8 +25,8 @@ public class ContextController {
 	public @ResponseBody
     Context getAllContexts () {
         try {
-            CBRInterface fl = new CBRInterface("C:/TEMP/dke/flora2/CBRM/ctxModelAIM.flr",
-                    "C:/TEMP/dke/flora2/CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
+            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
+                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
             fl.setDebug(false);
 
             List<String[]> rawHierarchy = fl.getCtxHierarchy();
@@ -68,12 +68,12 @@ public class ContextController {
     public @ResponseBody
     String getContextDetails (@PathVariable(value="id") String id) {
         try {
-            CBRInterface fl = new CBRInterface("C:/TEMP/dke/flora2/CBRM/ctxModelAIM.flr",
-                    "C:/TEMP/dke/flora2/CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
+            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
+                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
             fl.setDebug(false);
 
             String ctxFile = fl.getCtxFile(id);
-            ctxFile = "C:/TEMP/dke/flora2/CBRM" + ctxFile.substring(3,ctxFile.length()-1);
+            ctxFile = "CBRM" + ctxFile.substring(3,ctxFile.length()-1);
 
             List<String[]> ctx = fl.getCtx(id);
             return new String(Files.readAllBytes(Paths.get(ctxFile)));
