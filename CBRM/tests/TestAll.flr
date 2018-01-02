@@ -1,0 +1,30 @@
+/***************************************************************/
+/*         Tests for the context Model dynamics                */
+/*                                                             */
+/* Felix Burgstaller                                           */
+/* Version: 0.2                                                */
+/* Date: 28.4.2016                                             */
+/*                                                             */
+/* This file runs all available tests for dynamic ctx models   */
+/*                                                             */
+/* ['OO/tests/TestAll.flr'>>tests].                            */
+/***************************************************************/
+
+?- File[chdir('~')]@\io. 
+?- 'test.log'[open(append,?s)]@\io,
+     ?s[writeln('**********************************************')]@\io,
+     ?s[writeln('TEST SUITE CBRM')]@\io, ?s[close]@\io.
+?- \dateTime[now->?n]@\basetype, 'test.log'[open(append,?s)]@\io,?s[writeln(?n)]@\io, 
+     ?s[writeln('**********************************************')]@\io, ?s[close]@\io.
+
+?- ['OO/tests/StaticModel.flr'].  
+?- ['OO/tests/ModOps_param.flr'].  
+?- ['OO/tests/ModOps_paramValue.flr']. 
+?- ['OO/tests/ModOps_ctx.flr'].    
+?- ['OO/tests/ModOps_TermRule.flr'].
+
+?- 'test.log'[open(append,?s)]@\io,
+     ?s[writeln('**********************************************')]@\io,
+     ?s[writeln('                END TEST SUITE                ')]@\io, ?s[close]@\io.
+?- \dateTime[now->?n]@\basetype, 'test.log'[open(append,?s)]@\io,?s[writeln(?n)]@\io, 
+     ?s[writeln('**********************************************')]@\io, ?s[close]@\io.

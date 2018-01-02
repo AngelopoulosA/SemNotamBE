@@ -1,0 +1,191 @@
+/***************************************************************/
+/*         The basic file for context models                   */
+/*                                                             */
+/* Felix Burgstaller                                           */
+/* Version: 0.4                                                */
+/* Date: 18.07.2017                                            */
+/*                                                             */
+/* This file contains the basics for any context model         */
+/*                                                             */
+/***************************************************************/
+
+// M2
+ContextClass[|defBy{1..*}=>Parameter,ctxRelationship{0..*}=>ContextClass|].
+?model[detRelevantCtxs(?domainCase)=>?model]:-?model:ContextClass, ?domainCase:BusinessCaseClass@bc.
+?model[detCaseSpecificCtx(?domainCase,?,?)=>?model]:-?model:ContextClass, ?domainCase:BusinessCaseClass@bc.
+?model[|file{0..1} => \string, resolved => \boolean, specializes => ?model, ?param => ?param|]:- ?model:ContextClass, ?model[defBy->?param].
+
+?param[|covers => ?param,valueRelationship{0..*}=>?param|]:-?param:Parameter.
+?param[|detParamValue(?domainCase)=>?param|]:-?param:Parameter,?domainCase:BusinessCaseClass@bc.
+
+
+// M1
+?param:defBy:-?param:Parameter.
+?model[|?param=>?param|]:-?model:ContextClass,?param:Parameter.
+
+//Covers Transitivity
+?parent[covers->?ancestor]:-?_value:Parameter,
+							?parent:?_value[covers->?_child],
+							?_child:?_value[covers->?ancestor:?_value].
+//Covers Reflexivity
+?parent[covers->?parent]:- ?parent:?_dim, ?_dim:Parameter.
+
+//Context relationsship specialises
+?model[|paramCovers(Parameter)=>?model|]:-?model:ContextClass.
+?ctx[paramCovers(?param)->?cov]:-?model:ContextClass,
+							 {?ctx,?cov}:?model, 
+							 ?ctx[?param:Parameter->?_v1],
+							 ?cov[?param:Parameter->?_v2], 
+							 ?_v1[covers->?_v2].
+
+?cov[specialises->?ctx]:- ?model:ContextClass,
+						  {?ctx,?cov}:?model,
+						  ?ctx[paramCovers(?)->?cov],
+						  true{forall(?param)^(?:ContextClass[defBy->?param]~~> ?ctx[paramCovers(?param)->?cov])}.
+
+
+//Determines the relevant contexts for a given interestpec (?ispec in module ?mIS) [Different Variant]
+//Given: ?bc.. SemNOTAMcase
+//Return: ?ctx..relvant contexts
+?model[detRelevantCtxs(?bc)->?ctx]:-?model:ContextClass, 
+								?ctx:?model,
+								true{forall(?v)^(?ctx[?:Parameter->?v] ~~> (?_d:Parameter[detParamValue(?bc)->?val:?_d],?v:?_d[covers->?val]))}.
+
+//Cleans and loads the relevant contexts into ?m
+//Give: ?bc..SemNOTAMCase, ?mTarget..module to load to
+//Return: ?ctxf..context files loaded
+?model[%detCleanCaseSpecificCtx(?bc,?mTarget,?ctxf)]:-erasemodule{?mTarget},!,?model[%detCaseSpecificCtx(?bc,?mTarget,?ctxf)].
+												
+//Loads the relevant contexts into ?m
+//Give: ?bc..SemNOTAMCase, ?mTarget..module to load to
+//Return: ?ctxf..context files loaded
+?model[%detCaseSpecificCtx(?bc,?mTarget,?ctxf)]:-?model:ContextClass,
+											  ?model[detRelevantCtxs(?bc)->?ctx],
+											  ?ctx[file->?ctxf],(<>[+?ctxf>>?mTarget]).
+
+//----------------------------------------------------------------------------------------------------------//
+//------------------------------------MOD OPS---------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------------//
+
+//Delete the complete model
+//Give: -
+//Return: - 
+?model[%delete]:-?model:ContextClass,eraseall{?:?model[?->?]},eraseall{?:?param, ?param:Parameter},eraseall{?model:ContextClass}.
+
+//----------------------------------PARAMETER---------------------------------------//
+//ADDS a parameter with name ?param to the model + root value and getParamValue(...)
+//Given: ?param..parameter/Parameter name, ?vr..root value,
+//?detParamVal..reified detParamVal(...) for the parameter/Parameter
+//Return: ?ctx..the contexts extended by ?param
+?model[%addParam(?param, ?rootVal, ?ctx, ?detParamVal)]:- ?model:ContextClass, ?ctx:?model,
+	          t_insert{ ?param:Parameter},
+			  insert{?detParamVal}, 
+			  t_insertall{?rootVal:?param, ?model[defBy->?param], ?ctx[?param->?rootVal]}.
+
+//DELETES a Parameter from the model (all values and context ID removed - history reasons)
+//getParamValue is disabled as static rules cannot be deleted (i.e. rules not t_inserted by insertrule)
+//Given: ?param..parameter/Parameter name
+//Return: ?id..rules disabled
+?model[%delParam(?param,?id)]:- ?model:ContextClass,
+			  t_deleteall{?param:Parameter, ?[defBy->?param:Parameter]}, 
+              clause{@!{?id} ?param[detParamValue(?)->?]@?,?}, disable{?id,?,\@},
+			  t_deleteall{?:?param},
+			  t_deleteall{?x[covers->?y], ?x:?param,?y:?param},
+			  t_deleteall{?[?param->?]}.
+
+//----------------------------------PARAMETER VALUE---------------------------------------//
+//ADD leaf parameter value
+//Given: ?parent..parent node, ?newVal..the new value to add
+//Return: -
+?model[%addValueLeaf(?parent, ?newVal)]:- ?model:ContextClass,
+              ?parent:?param,?param:Parameter, t_insert{?newVal:?param},
+			  t_insert{?parent[covers->?newVal]}.
+
+//ADD node parameter value 
+//Given: ?parent..parent node, ?newVal..the new value to add, ?child.. the nodes to be assigned as childs
+//Return: -
+?model[%addValueNode(?parent, ?newVal, ?child)]:- ?model:ContextClass,
+           ?parent:?param, ?param:Parameter, t_insert{?newVal:?param},
+		   t_insert{?parent[covers->?newVal], ?newVal[covers-> ?child]},
+		   t_deleteall{?parent[covers->?child]}.
+
+//ADD root parameter value 
+//Given: ?newVal.. the new value to add, ?child.. the nodes to be assigned as childs
+//Return: -
+?model[%addValueRoot(?newVal, ?child)]:- ?model:ContextClass,
+           ?child:?param, ?param:Parameter, t_insert{?newVal:?param},
+		   t_insert{?newVal[covers-> ?child]}.
+
+//DELETE parameter value sub graph
+//Given: ?val.. The root value of the subgraph to delete
+//Return: -
+?model[%delValueSubGraph(?val)]:- ?model:ContextClass, t_deleteall{?[covers->?val]}, erase{?val:?}.
+
+
+//DELETE parameter value
+//Given: ?val.. the value to delete, children are then covered directly by ?val's parent(s)
+//Return: ?parent.. the parents of the value (necessary for deleteall/insertall to work)
+?model[%delValue(?val,?parent)]:- ?model:ContextClass,
+								  ?parent[covers->?val],
+								  \naf ?parent = ?val, 
+								  ?val[covers->?children],
+								  \naf ?val = ?children,
+								  t_deleteall{?[covers->?val]},
+								  t_deleteall{?val[covers->?]},
+								  t_deleteall{?val:?},
+								  t_insertall{?parent[covers->?children]}.
+
+//DELETE context whose value has been removed
+//Given: ?val..the value for which ctx are to be deleted
+//Return: -
+?model[%delCtxByValue]:- ?model:ContextClass,t_deleteall{?ctx:?model[?->?] | ?ctx:?model[?param->?val],?param:Parameter,\naf ?val:?param}.
+
+//MODIFY context whose value has been removed
+//Given: ?old..the old value for which ctx are to be modified, ?newVal.. the new value to be used instead of the old
+//Return: ?ctx.. the modified ctx (necessary for deleteall/insertall to work)
+?model[%modCtxByValue(?old,?newVal,?ctx)]:- ?model:ContextClass,
+											   ?ctx:?model[?param->?old],
+											   ?newVal:?param, 
+											   t_insertall{?ctx[?param->?newVal]}, 
+											   t_deleteall{?ctx[?->?old]}.
+
+?ctx[%situationalModification(?ctxTarget,?param)]:-?ctx:AIMCtx, ?ctxTarget:AIMCtx,
+											 t_deleteall{?ctx[?->?]},
+											 ?ctxTarget[?param:Parameter->?new],
+											 t_insertall{?ctx[?param->?new]}.
+
+//Modification is done using add and delete
+
+
+//----------------------------------Contexts---------------------------------------//
+//ADDS a context def ?ctx to the model
+//Given: ?ctx.. a context as specified in Model, e.g.,  ${test:AIMCtx[Airline->Berlin, Usage->AllUsers,Interest->Interests]@ctxModel}
+//Return: -
+?model[%addCtx(?ctx)]:- ?model:ContextClass,t_insert{?ctx}.
+
+//DELETE a context ?ctx from the model
+//Given: ?ctx.. a context as specified in Model, e.g.,  ${test:AIMCtx[Airline->Berlin, Usage->AllUsers,Interest->Interests]@ctxModel}
+//Return: -
+?model[%delCtx(?ctx)]:- ?model:ContextClass,t_deleteall{?ctx[?->?]|?ctx:?_x,?_x:ContextClass},t_deleteall{?ctx:?model}.
+
+//DETERMINE unused values
+//Given: -
+//Return: - 
+?model[detUnusedValues->?v]:- ?model:ContextClass, ?v:?_param, ?_param:Parameter, \naf ?:?model[?_param->?v].
+
+
+//--------------------------------Rules & Terms-----------------------------------//
+//ADD a fact/rule/meta-descriptor to ctx
+//Given: ?rt.. the fact/rule/meta-descriptor to add
+//Return: -
+?ctx[%addTermRule(?rt)]:- ?ctx:?model, ?model:ContextClass, ?ctx[file->?ctxf],?ctxf[open(append,?Stream)]@\io, 
+						  ?Stream[write(?rt)]@\io,
+						  ?Stream[close]@\io.
+
+//DELETE a fact/rule/meta-descriptor from ctx (all facts/rules to be deleted need to have an identifier)
+//Given: ?rt.. the fact/rule/meta-descriptor to delete, e.g., '@!{ACI_twy}\n' ALWAYS ADD NEWLINE!!
+//Return: -
+?ctx[%delTermRule(?rt)]:- ?ctx:?model, ?model:ContextClass, ?ctx[file->?ctxf],?ctxf[open(read,?Stream)]@\io, 'CCtx/Contexts/tmp.tmp'[open(write,?s)]@\io,
+						  \while \repeat(?Stream[readline(atom,?Line)]@\io) 
+						  \do \if ?rt = ?Line \then ?Stream[readline(atom,?)]@\io \else ?s[write(?Line)]@\io,
+						  ?Stream[close]@\io, ?s[close]@\io, File[remove(?ctxf)]@\io,File[rename('CCtx/Contexts/tmp.tmp',?ctxf)]@\io.

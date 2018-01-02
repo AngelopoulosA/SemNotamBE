@@ -1,0 +1,142 @@
+/***************************************************************/
+/*         The basic file for context models                   */
+/*                                                             */
+/* Felix Burgstaller                                           */
+/* Version: 0.4                                                */
+/* Date: 18.07.2017                                            */
+/*                                                             */
+/* Tests business case add and delete (newBC) and whether      */
+/* the correct contexts and rules are loaded and applied to the*/
+/* business cases.                                             */
+/*                                                             */
+/***************************************************************/
+
+// TESTS --- determination and application of correct contexts and rules
+#include "StaticModel_detCtx.flr"
+
+?- File[chdir('/opt/Flora-2/flora2')]@\io.
+?- ['OO/ctxModelAIM.flr'>>ctxModel],['OO/bc'>>bc]. 
+
+?- \if isloaded{m} \then erasemodule{m} \else newmodule{m}.
+?- setwarnings{off}.
+
+?- 'test.log'[open(append,?s)]@\io,
+     ?s[writeln('----------------------------------------------')]@\io,
+     ?s[writeln('Testing Basic Model')]@\io, ?s[close]@\io.
+?- \dateTime[now->?n]@\basetype, 'test.log'[open(append,?s)]@\io,?s[writeln(?n)]@\io, ?s[writeln('----------------------------------------------')]@\io, ?s[close]@\io.
+
+//---test Business Case bc1
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1,m,?ctxf)]@ctxModel.
+?- %testCtx_bc1.
+?- %testResult_bc1.
+?- SemNOTAMCase[%newBC(${bc1_apronCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_apronClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_apronCl,m,?ctxf)]@ctxModel.
+?- %testCtx_bc1_apronCl.
+?- %testResult_bc1_apronCl.
+?- SemNOTAMCase[%newBC(${bc1_rwyCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_rwyCl,m,?ctxf)]@ctxModel.
+?- %testCtx_bc1_rwyCl.
+?- %testResult_bc1_rwyCl.
+?- SemNOTAMCase[%newBC(${bc1_obstructionT:SemNOTAMCase[interestSpec->iSpec1,notam->n_obstructionT]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_obstructionT,m,?ctxf)]@ctxModel.
+?- %testCtx_bc1_obstructionT.
+?- %testResult_bc1_obstructionT.
+?- SemNOTAMCase[%newBC(${bc1_obstructionC:SemNOTAMCase[interestSpec->iSpec1,notam->n_obstructionC]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_obstructionC,m,?ctxf)]@ctxModel.
+?- %testCtx_bc1_obstructionC.
+?- %testResult_bc1_obstructionC.
+?- SemNOTAMCase[%newBC(${bc1_specialPort:SemNOTAMCase[interestSpec->iSpec1,notam->n_specialPort]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_specialPort,m,?ctxf)]@ctxModel.
+?- %testCtx_bc1_specialPort.
+?- %testResult_bc1_specialPort.
+?- SemNOTAMCase[%newBC(${bc1_aeroBeacon:SemNOTAMCase[interestSpec->iSpec1,notam->n_aeroBeacon]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_aeroBeacon,m,?ctxf)]@ctxModel.
+?- %testCtx_bc1_aeroBeacon.
+?- %testResult_bc1_aeroBeacon.
+?- SemNOTAMCase[%newBC(${bc1_aeroEquip:SemNOTAMCase[interestSpec->iSpec1,notam->n_aeroEquip]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc1_aeroEquip,m,?ctxf)]@ctxModel.
+?- %testCtx_bc1_aeroEquip.
+?- %testResult_bc1_aeroEquip.
+
+//---test Business Case bc2
+?- SemNOTAMCase[%newBC(${bc2:SemNOTAMCase[interestSpec->iSpec2,notam->n1]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2.
+?- %testResult_bc2.
+?- SemNOTAMCase[%newBC(${bc2_apronCl:SemNOTAMCase[interestSpec->iSpec2,notam->n_apronClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_apronCl,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_apronCl.
+?- %testResult_bc2_apronCl.
+?- SemNOTAMCase[%newBC(${bc2_rwyCl:SemNOTAMCase[interestSpec->iSpec2,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_rwyCl,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_rwyCl.
+?- %testResult_bc2_rwyCl.
+?- SemNOTAMCase[%newBC(${bc2_obstructionT:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionT]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_obstructionT,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_obstructionT.
+?- %testResult_bc2_obstructionT.
+?- SemNOTAMCase[%newBC(${bc2_obstructionC:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionC]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_obstructionC,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_obstructionC.
+?- %testResult_bc2_obstructionC.
+?- SemNOTAMCase[%newBC(${bc2_specialPort:SemNOTAMCase[interestSpec->iSpec2,notam->n_specialPort]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_specialPort,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_specialPort.
+?- %testResult_bc2_specialPort.
+?- SemNOTAMCase[%newBC(${bc2_aeroBeacon:SemNOTAMCase[interestSpec->iSpec2,notam->n_aeroBeacon]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_aeroBeacon,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_aeroBeacon.
+?- %testResult_bc2_aeroBeacon.
+?- SemNOTAMCase[%newBC(${bc2_aeroEquip:SemNOTAMCase[interestSpec->iSpec2,notam->n_aeroEquip]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc2_aeroEquip,m,?ctxf)]@ctxModel.
+?- %testCtx_bc2_aeroEquip.
+?- %testResult_bc2_aeroEquip.
+
+//---test Business Case bc3
+?- SemNOTAMCase[%newBC(${bc3:SemNOTAMCase[interestSpec->iSpec3,notam->n1]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3.
+?- %testResult_bc3.
+?- SemNOTAMCase[%newBC(${bc3_apronCl:SemNOTAMCase[interestSpec->iSpec3,notam->n_apronClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_apronCl,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_apronCl.
+?- %testResult_bc3_apronCl.
+?- SemNOTAMCase[%newBC(${bc3_rwyCl:SemNOTAMCase[interestSpec->iSpec3,notam->n_rwyClosure]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_rwyCl,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_rwyCl.
+?- %testResult_bc3_rwyCl.
+?- SemNOTAMCase[%newBC(${bc3_obstructionT:SemNOTAMCase[interestSpec->iSpec3,notam->n_obstructionT]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_obstructionT,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_obstructionT.
+?- %testResult_bc3_obstructionT.
+?- SemNOTAMCase[%newBC(${bc3_obstructionC:SemNOTAMCase[interestSpec->iSpec3,notam->n_obstructionC]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_obstructionC,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_obstructionC.
+?- %testResult_bc3_obstructionC.
+?- SemNOTAMCase[%newBC(${bc3_specialPort:SemNOTAMCase[interestSpec->iSpec3,notam->n_specialPort]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_specialPort,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_specialPort.
+?- %testResult_bc3_specialPort.
+?- SemNOTAMCase[%newBC(${bc3_aeroBeacon:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroBeacon]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_aeroBeacon,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_aeroBeacon.
+?- %testResult_bc3_aeroBeacon.
+?- SemNOTAMCase[%newBC(${bc3_aeroEquip:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroEquip]@bc})]@bc.
+?- AIMCtx[%detCleanCaseSpecificCtx(bc3_aeroEquip,m,?ctxf)]@ctxModel.
+?- %testCtx_bc3_aeroEquip.
+?- %testResult_bc3_aeroEquip.
+
+
+?- 'test.log'[open(append,?s)]@\io,?s[writeln('')]@\io,?s[writeln('######TEST deleting specific ContextClass:')]@\io, ?s[close]@\io.
+?- AIMCtx[%delete]@ctxModel.
+?- 'test.log'[open(append,?s)]@\io,?s[write('Test model deleted:')]@\io,
+            \if (\naf AIMCtx:ContextClass@ctxModel, \naf ?:Parameter@ctxModel, \naf ?:AIMCtx, \naf ?[covers->?]@ctxModel, \naf ?[detParamValue(i3a,bc)->?]@ctxModel)
+			\then ?s[writeln('+++success+++')]@\io 
+			\else ?s[writeln('--FAIL---')]@\io,
+            ?s[close]@\io.
+
+?- 'test.log'[open(append,?s)]@\io,
+     ?s[writeln('----------------------------------------------')]@\io,
+     ?s[writeln('                  END TEST                    ')]@\io, ?s[close]@\io.
+?- \dateTime[now->?n]@\basetype, 'test.log'[open(append,?s)]@\io,?s[writeln(?n)]@\io, 
+     ?s[writeln('----------------------------------------------')]@\io, ?s[close]@\io.
