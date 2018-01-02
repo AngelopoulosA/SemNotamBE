@@ -1,0 +1,27 @@
+#include "flrheader.flh"
+#include "flr_fld_standardtypes.flh"
+
+FLORA_THIS_WORKSPACE(mvd)(__fldnewvar1,notam,__fldnewvar2,__fldnewvar3).
+FLORA_THIS_WORKSPACE(mvd)(__fldnewvar1,interestSpec,__fldnewvar2,__fldnewvar3).
+FLORA_THIS_WORKSPACE(mvd)(__fldnewvar1,flightPhase,__fldnewvar2,__fldnewvar3).
+FLORA_THIS_WORKSPACE(mvd)(__fldnewvar1,interest,__fldnewvar2,__fldnewvar3).
+FLORA_THIS_WORKSPACE(mvd)(__fldnewvar1,weight,__fldnewvar2,__fldnewvar3).
+FLORA_THIS_WORKSPACE(mvd)(__fldnewvar1,weightRestriction,__fldnewvar2,__fldnewvar3).
+FLORA_THIS_WORKSPACE(mvd)(__fldnewvar1,status,__fldnewvar2,__fldnewvar3).
+FLORA_THIS_WORKSPACE(mvd)(__fldnewvar1,feature,__fldnewvar2,__fldnewvar3).
+FLORA_THIS_WORKSPACE(sub)(__fldnewvar1,'SemNOTAMCase',__fldnewvar2).
+FLORA_THIS_WORKSPACE(sub)(__fldnewvar1,'InterestSpec',__fldnewvar2).
+FLORA_THIS_WORKSPACE(sub)(__fldnewvar1,'Aircraft',__fldnewvar2).
+FLORA_THIS_WORKSPACE(sub)(__fldnewvar1,'NOTAM',__fldnewvar2).
+FLORA_THIS_WORKSPACE(sub)(__fldnewvar1,'BusinessCaseClass',__fldnewvar2).
+FLORA_THIS_WORKSPACE(sub)(__fldnewvar1,descProps,__fldnewvar2).
+FLORA_THIS_WORKSPACE(imvdsig)(__fldnewvar1,notam,__fldnewvar2,__fldnewvar3).
+FLORA_THIS_WORKSPACE(imvdsig)(__fldnewvar1,interestSpec,__fldnewvar2,__fldnewvar3).
+FLORA_THIS_WORKSPACE(imvdsig)(__fldnewvar1,msg,__fldnewvar2,__fldnewvar3).
+FLORA_THIS_WORKSPACE(imvdsig)(__fldnewvar1,type,__fldnewvar2,__fldnewvar3).
+FLORA_THIS_WORKSPACE(imvdsig)(__fldnewvar1,flightPhase,__fldnewvar2,__fldnewvar3).
+FLORA_THIS_WORKSPACE(imvdsig)(__fldnewvar1,interest,__fldnewvar2,__fldnewvar3).
+FLORA_THIS_WORKSPACE(imvdsig)(__fldnewvar1,descProps,__fldnewvar2,__fldnewvar3).
+FLORA_THIS_WORKSPACE(tran)(__fldnewvar1,delBC,__fldnewvar2).
+FLORA_THIS_WORKSPACE(tran)(__fldnewvar1,flapply(newBC,__bc),__fldnewvar2).
+FLORA_THIS_WORKSPACE(tran)(__fldnewvar1,flapply(addBC,__bc),__fldnewvar2).

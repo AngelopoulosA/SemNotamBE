@@ -1,0 +1,79 @@
+/***************************************************************/
+/* The basic file for business case classes and business cases */
+/*                                                             */
+/* Felix Burgstaller                                           */
+/* Version: 0.4                                                */
+/* Date: 18.07.2017                                            */
+/*                                                             */
+/***************************************************************/
+//---M2
+BusinessCaseClass[|descProps => \object|].
+
+//---M1
+InterestSpec[|interest=>\object,flightPhase=>FlightPhase|].
+NOTAM[|type{1..*}=>\object,msg=>\object|].
+SemNOTAMCase:BusinessCaseClass[|interestSpec:descProps=>InterestSpec, notam:descProps=>NOTAM|].
+
+
+//----------------------------------Business Cases---------------------------------------//
+//ADDS a business case ?bc to the module
+//Given: ?bc.. an interest specification, e.g., ${bc3_rwyCl:SemNOTAMCase[interestSpec->iSpec3,notam->n_rwyClosure]@bc}
+//Return: -
+?model[%addBC(?bc)]:- ?model:BusinessCaseClass,t_insert{?bc}.
+
+//DELETE a business case ?bc from the module (ispecs/notams are not deleted as they might be reused)
+//Given: ?bc.. object ID of interestSpec to delete, ?mIS.. module of interestSpec
+//Return: -
+?model[%delBC]:- ?model:BusinessCaseClass, t_deleteall{?b[?->?]|?b:?m,?m:BusinessCaseClass},t_deleteall{?:?m|?m:BusinessCaseClass}.
+
+//NEW delete all business cases from the module (ispecs/notams are not deleted as they might be reused) and add ?bc
+//Given: ?bc.. object ID of interestSpec to delete, ?mIS.. module of interestSpec
+//Return: -
+?model[%newBC(?bc)]:- ?model:BusinessCaseClass, ?model[%delBC],?model[%addBC(?bc)].
+
+//---M0
+n1:NOTAM[feature->runway,status->limited,weightRestriction->500000].
+n_apronClosure:NOTAM[feature->apron,status->closed].
+n_rwyClosure:NOTAM[feature->runway,status->closed].
+n_obstructionT:NOTAM[feature->obstruction,status->tree].
+n_obstructionC:NOTAM[feature->obstruction,status->crane].
+n_specialPort:NOTAM[feature->waterlaneSki, status->limited].
+n_aeroBeacon:NOTAM[feature->aerodromeBeacon, status->down].
+n_aeroEquip:NOTAM[feature->aerodromeILS, status->down].
+
+
+Boeing_737:Aircraft[weight->194700].
+Bell_Augusta:Aircraft.
+
+iSpec1:InterestSpec[interest->Boeing_737:Aircraft,flightPhase->onground].
+iSpec2:InterestSpec[interest->Bell_Augusta,flightPhase->onground].
+iSpec3:InterestSpec[interest->Bell_Augusta,flightPhase->arrival].
+
+
+bc1:SemNOTAMCase[interestSpec->iSpec1,notam->n1].
+
+//bc1_apronCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_apronClosure].
+//bc1_rwyCl:SemNOTAMCase[interestSpec->iSpec1,notam->n_rwyClosure].
+//bc1_obstructionT:SemNOTAMCase[interestSpec->iSpec1,notam->n_obstructionT].
+//bc1_obstructionC:SemNOTAMCase[interestSpec->iSpec1,notam->n_obstructionC].
+//bc1_specialPort:SemNOTAMCase[interestSpec->iSpec1,notam->n_specialPort].
+//bc1_aeroBeacon:SemNOTAMCase[interestSpec->iSpec1,notam->n_aeroBeacon].
+//bc1_aeroEquip:SemNOTAMCase[interestSpec->iSpec1,notam->n_aeroEquip].
+
+//bc2:SemNOTAMCase[interestSpec->iSpec2,notam->n1].
+//bc2_apronCl:SemNOTAMCase[interestSpec->iSpec2,notam->n_apronClosure].
+//bc2_rwyCl:SemNOTAMCase[interestSpec->iSpec2,notam->n_rwyClosure].
+//bc2_obstructionT:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionT].
+//bc2_obstructionC:SemNOTAMCase[interestSpec->iSpec2,notam->n_obstructionC].
+//bc2_specialPort:SemNOTAMCase[interestSpec->iSpec2,notam->n_specialPort].
+//bc2_aeroBeacon:SemNOTAMCase[interestSpec->iSpec2,notam->n_aeroBeacon].
+//bc2_aeroEquip:SemNOTAMCase[interestSpec->iSpec2,notam->n_aeroEquip].
+
+//bc3:SemNOTAMCase[interestSpec->iSpec3,notam->n1].
+//bc3_apronCl:SemNOTAMCase[interestSpec->iSpec3,notam->n_apronClosure].
+//bc3_rwyCl:SemNOTAMCase[interestSpec->iSpec3,notam->n_rwyClosure].
+//bc3_obstructionT:SemNOTAMCase[interestSpec->iSpec3,notam->n_obstructionT].
+//bc3_obstructionC:SemNOTAMCase[interestSpec->iSpec3,notam->n_obstructionC].
+//bc3_specialPort:SemNOTAMCase[interestSpec->iSpec3,notam->n_specialPort].
+//bc3_aeroBeacon:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroBeacon].
+//bc3_aeroEquip:SemNOTAMCase[interestSpec->iSpec3,notam->n_aeroEquip].
