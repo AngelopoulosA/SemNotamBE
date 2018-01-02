@@ -1,8 +1,8 @@
-package hello.Controller;
+package app.Controller;
 
 import dke.pr.cli.CBRInterface;
-import hello.Model.ParameterValue;
-import hello.Model.TempParameterValue;
+import app.Model.ParameterValue;
+import app.Model.TempParameterValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(path="/parameters")

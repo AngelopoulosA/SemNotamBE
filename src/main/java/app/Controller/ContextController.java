@@ -1,9 +1,8 @@
-package hello.Controller;
+package app.Controller;
 
 import dke.pr.cli.CBRInterface;
-import hello.Model.Context;
-import hello.Model.TempContext;
-import org.hibernate.boot.jaxb.SourceType;
+import app.Model.Context;
+import app.Model.TempContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
