@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/gs-mysql-data.iml" filepath="$PROJECT_DIR$/gs-mysql-data.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SemNotamBE.iml" filepath="$PROJECT_DIR$/SemNotamBE.iml" />
     </modules>
   </component>
 </project>
