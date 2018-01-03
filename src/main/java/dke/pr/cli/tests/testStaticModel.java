@@ -6,8 +6,8 @@ import dke.pr.cli.CBRInterface;
 
 public class testStaticModel {
 	public static void main(String[] args) throws Exception {
-		CBRInterface fl = new CBRInterface("C:/TEMP/dke/flora2/CBRM/ctxModelAIM.flr",
-				"C:/TEMP/dke/flora2/CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
+		CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
+				"CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
 
 		fl.setDebug(false);
 

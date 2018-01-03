@@ -60,9 +60,9 @@ public class CBRInterface extends Flora2CLI {
 		close();
 		start();
 		if (!loadFile(F_CTX_MODEL, MODEL_MODULE))
-			throw new IOException("Loading module failed");
+			throw new IOException("Loading module model failed");
 		if (!loadFile(F_BC, BC_MODULE))
-			throw new IOException("Loading module failed");
+			throw new IOException("Loading module bc failed");
 		return true;
 	}
 
@@ -626,7 +626,8 @@ public class CBRInterface extends Flora2CLI {
 
 		ret = ret
 				&& removeValueFromFile(model,
-				"(?s)\\w+\\[covers->\\{.*\\}\\]\\.", vName);
+				"(?s)\\w+\\[covers->\\{.*\\}\\]\\.", ","+ vName);
+
 
 		ret = ret
 				&& removeValueFromFile(model, "(?s)\\{.*" + vName
