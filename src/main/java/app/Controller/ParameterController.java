@@ -1,8 +1,8 @@
 package app.Controller;
 
+import app.Model.Parameter;
 import dke.pr.cli.CBRInterface;
 import app.Model.ParameterValue;
-import app.Model.TempParameterValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,41 +36,58 @@ public class ParameterController {
 
     @GetMapping(path="/{id}")
     public @ResponseBody
-    ParameterValue getParameterDetails (@PathVariable(value="id") String id) {
+    Parameter getParameterDetails (@PathVariable(value="id") String id) {
         try {
             CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
                     "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
             fl.setDebug(false);
             List<String[]> rawParamValuesHierarchy = fl.getParameterValuesHiearchy(id);
 
+            Parameter parameter = new Parameter(id);
             if(rawParamValuesHierarchy.size() > 0) {
-                Dictionary<String, TempParameterValue> parameterValues = new Hashtable<>();
+                Map<String, ParameterValue> parameterValues = new HashMap<>();
                 for (String[] hierarchy : rawParamValuesHierarchy) {
-                    TempParameterValue parent = parameterValues.get(hierarchy[0]);
+                    ParameterValue parent = parameterValues.get(hierarchy[0]);
                     if(parent == null) {
-                        parent = new TempParameterValue(hierarchy[0]);
+                        parent = new ParameterValue(hierarchy[0]);
                         parameterValues.put(parent.getName(), parent);
                     }
-                    TempParameterValue child = parameterValues.get(hierarchy[1]);
+                    ParameterValue child = parameterValues.get(hierarchy[1]);
                     if(child == null) {
-                        child = new TempParameterValue(hierarchy[1]);
+                        child = new ParameterValue(hierarchy[1]);
                         parameterValues.put(child.getName(), child);
                     }
                     parent.getChildren().add(child);
                     child.getParents().add(parent);
                 }
-                Collections.list(parameterValues.elements()).stream().forEach(pv -> {
-                    TempParameterValue parent = pv.getParents().stream().min(Comparator.comparingInt(p -> p.getChildren().size())).orElseGet(()->null);
-                    pv.setParents(new LinkedList<>());
-                    if (parent != null) {
-                        pv.getParents().add(parent);
-                    }
-                });
-                TempParameterValue tempRoot = Collections.list(parameterValues.elements()).stream().filter(pv -> pv.getParents().isEmpty()).findFirst().get();
-                ParameterValue root = tempRoot.toParameterValue();
-                return root;
+                ParameterValue root = parameterValues.values().stream().filter(pv -> pv.getParents().isEmpty()).findFirst().get();
+
+                parameter.setParameterValueHierarchy(root);
+                parameter.setDetParamValue(fl.getDetParamValue(id));
+                return parameter;
             }
             return null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    @GetMapping(path="/withValues")
+    public @ResponseBody
+    Map<String,List<String>> getParameterWithValues () {
+        try {
+            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
+                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
+            fl.setDebug(false);
+
+            Map<String,List<String>> parametersWithValues = new HashMap<>();
+            List<String> parameters = fl.getParameters();
+            for (String parameter : parameters) {
+                List<String> parameterValues = fl.getParameterParameterValues(parameter);
+                parametersWithValues.put(parameter, parameterValues);
+            }
+            return parametersWithValues;
+
         } catch (IOException e) {
             return null;
         }
