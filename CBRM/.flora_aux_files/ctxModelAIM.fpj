@@ -1,6 +1,0 @@
-%% #include info for source file: C:/TEMP/dke/flora2/CBRM/ctxModelAIM.flr
-
-
-:-(multifile(/('_$_$_flora''include_prj_info',2))).
-'_$_$_flora''include_prj_info'('C:\\TEMP\\dke\\flora2\\CBRM\\ctxModelAIM.flr','C:/TEMP/dke/flora2/CBRM\\ctxModel.flr').
-'_$_$_flora''include_prj_info'('C:/TEMP/dke/flora2/CBRM/ctxModelAIM.flr','(runtime)').
