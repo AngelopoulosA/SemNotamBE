@@ -32,6 +32,7 @@ public class ContextController {
 
             if(rawHierarchy.size() > 0) {
                 Dictionary<String, TempContext> contexts = new Hashtable<>();
+
                 for (String[] hierarchy : rawHierarchy) {
                     TempContext parent = contexts.get(hierarchy[1]);
                     if(parent == null) {
@@ -46,13 +47,6 @@ public class ContextController {
                     parent.getChildren().add(child);
                     child.getParents().add(parent);
                 }
-                Collections.list(contexts.elements()).stream().forEach(pv -> {
-                    TempContext parent = pv.getParents().stream().min(Comparator.comparingInt(p -> p.getChildren().size())).orElseGet(()->null);
-                    pv.setParents(new LinkedList<>());
-                    if (parent != null) {
-                        pv.getParents().add(parent);
-                    }
-                });
                 TempContext tempRoot = Collections.list(contexts.elements()).stream().filter(pv -> pv.getParents().isEmpty()).findFirst().get();
                 Context root = tempRoot.toContext();
                 return root;
@@ -65,19 +59,16 @@ public class ContextController {
 
     @GetMapping(path="/{id}")
     public @ResponseBody
-    String getContextDetails (@PathVariable(value="id") String id) {
+    HashMap<String, String> getContextDetails (@PathVariable(value="id") String id) {
         try {
             CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
                     "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
             fl.setDebug(false);
 
-            String ctxFile = fl.getCtxFile(id);
-            ctxFile = "CBRM" + ctxFile.substring(3,ctxFile.length()-1);
+            HashMap<String, String> rules = fl.getRules(id);
+            return rules;
 
-            List<String[]> ctx = fl.getCtx(id);
-            return new String(Files.readAllBytes(Paths.get(ctxFile)));
-
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

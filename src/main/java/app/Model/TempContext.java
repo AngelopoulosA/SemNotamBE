@@ -42,7 +42,7 @@ public class TempContext {
 
     public Context toContext() {
         Context pv = new Context(name);
-        pv.setChildren(children.stream().filter(c -> c.getParents().get(0) == this).map(c -> c.toContext()).collect(Collectors.toList()));
+        pv.setChildren(children.stream().map(c -> c.toContext()).collect(Collectors.toList()));
         return pv;
     }
 }
