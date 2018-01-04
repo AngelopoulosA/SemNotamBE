@@ -7,6 +7,10 @@ public class Parameter {
     private ParameterValue parameterValueHierarchy;
     private List<String> detParamValue;
 
+    public Parameter() {
+
+    }
+
     public Parameter(String name) {
         this.name = name;
     }

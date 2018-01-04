@@ -2,7 +2,7 @@
 .idea/workspace.xml
 
  ### Java ###
-target
+target/**
 
 ### Flora2 ###
 CBRM/.flora_aux_files

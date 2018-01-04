@@ -53,13 +53,6 @@ public class QueryController {
                 i++;
             }
 
-			List<String[]> interestSpecClass = fl.getInterestSpecClass();
-			List<String> iSpecs = fl.getISpecs();
-			for (String ispec : iSpecs) {
-				List<String[]> iSpecInfo = fl.getISpecInfo(ispec);
-				System.out.println();
-			}
-
 			return semNotams;
 		} catch (IOException e) {
 			return null;

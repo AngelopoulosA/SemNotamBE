@@ -1,17 +1,16 @@
 package app.Controller;
 
+import app.Model.Context;
 import app.Model.Parameter;
 import dke.pr.cli.CBRInterface;
 import app.Model.ParameterValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(path="/parameters")
@@ -61,12 +60,18 @@ public class ParameterController {
                     child.getParents().add(parent);
                 }
                 ParameterValue root = parameterValues.values().stream().filter(pv -> pv.getParents().isEmpty()).findFirst().get();
-
                 parameter.setParameterValueHierarchy(root);
-                parameter.setDetParamValue(fl.getDetParamValue(id));
-                return parameter;
+            } else {
+                List<String> parameterValues = fl.getParameterParameterValues(id);
+                if(parameterValues.size() == 1) { // Parameter has only one value and thus no hierarchy
+                    parameter.setParameterValueHierarchy(new ParameterValue(parameterValues.get(0)));
+                } else {
+                    return null;
+                }
             }
-            return null;
+
+            parameter.setDetParamValue(fl.getDetParamValue(id));
+            return parameter;
         } catch (IOException e) {
             return null;
         }
@@ -90,6 +95,94 @@ public class ParameterController {
 
         } catch (IOException e) {
             return null;
+        }
+    }
+
+    @PostMapping(path="")
+    public @ResponseBody
+    Parameter addParameter (@RequestBody Parameter parameter) {
+        try {
+            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
+                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
+            fl.setDebug(false);
+
+            String detParamValueDef = parameter.getDetParamValue().stream().collect(Collectors.joining("\r\n"));
+            fl.addParameter(parameter.getName(), parameter.getParameterValueHierarchy().getName(), detParamValueDef);
+
+            Thread.sleep(1000);
+            fl.restart();
+            return getParameterDetails(parameter.getName());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @DeleteMapping(path="/{id}")
+    public @ResponseBody
+    boolean deleteParameter (@PathVariable(value="id") String id) {
+        try {
+            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
+                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
+            fl.setDebug(false);
+
+            boolean result = fl.delParameter(id);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @PutMapping(path="/{id}")
+    public @ResponseBody
+    Parameter updateParameterDetParamValue (@PathVariable(value="id") String id, @RequestBody Parameter parameter) {
+        try {
+            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
+                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
+            fl.setDebug(false);
+
+            String detParamValueDef = parameter.getDetParamValue().stream().collect(Collectors.joining("\r\n"));
+            fl.updateDetParamValue(id, detParamValueDef);
+
+            Thread.sleep(1000);
+            fl.restart();
+            return getParameterDetails(parameter.getName());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @PostMapping(path="/{id}")
+    public @ResponseBody
+    boolean addParameterValue (@PathVariable(value="id") String parameterId, @RequestBody ParameterValue parameterValue) {
+        try {
+            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
+                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
+            fl.setDebug(false);
+
+            String[] parents = parameterValue.getParents().stream().map(p -> p.getName()).toArray(String[]::new);
+            boolean result = fl.addParameterValue(parameterId, parameterValue.getName(), parents, null);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @DeleteMapping(path="/{id}/{valueId}")
+    public @ResponseBody
+    boolean deleteParameterValue (@PathVariable(value="id") String parameterId, @PathVariable(value="valueId") String parameterValueId) {
+        try {
+            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
+                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
+            fl.setDebug(false);
+
+            return fl.delParameterValue(parameterValueId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

@@ -1,6 +1,7 @@
 package app.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,10 +11,14 @@ public class ParameterValue {
     private List<ParameterValue> children;
     private List<ParameterValue> parents;
 
-    public ParameterValue(String name) {
-        this.setName(name);
+    public ParameterValue() {
         this.setChildren(new LinkedList<>());
         this.setParents(new LinkedList<>());
+    }
+
+    public ParameterValue(String name) {
+        this();
+        this.setName(name);
     }
 
     public List<ParameterValue> getChildren() {
@@ -37,6 +42,7 @@ public class ParameterValue {
         return parents;
     }
 
+    @JsonProperty
     public void setParents(List<ParameterValue> parents) {
         this.parents = parents;
     }
