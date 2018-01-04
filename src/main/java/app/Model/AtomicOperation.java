@@ -1,4 +1,8 @@
 package app.Model;
 
-public class AtominOperation {
+import javax.persistence.Entity;
+
+@Entity
+public class AtomicOperation {
+    private String type;
 }
