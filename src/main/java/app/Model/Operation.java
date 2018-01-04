@@ -8,7 +8,7 @@ import java.util.Date;
  * Created by Anna on 11.12.2017.
  */
 @Entity
-public class Operation {
+public abstract class Operation {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
