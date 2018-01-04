@@ -12,13 +12,17 @@ public class Context {
     private Map<String, String> rules;
     private List<String> ruleDevelopers;
 
-    public Context(String name) {
-        this.setName(name);
+    public Context() {
         this.setChildren(new LinkedList<>());
         this.setParents(new LinkedList<>());
         this.setParameterValues(new Hashtable<>());
         this.setRules(new Hashtable<>());
         this.setRuleDevelopers(new LinkedList<>());
+    }
+
+    public Context(String name) {
+        this();
+        this.setName(name);
     }
 
     public List<Context> getChildren() {
