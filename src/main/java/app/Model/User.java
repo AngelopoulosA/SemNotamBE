@@ -1,6 +1,7 @@
 package app.Model;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity // This tells Hibernate to make a table out of this class
 public class User {
@@ -8,12 +9,11 @@ public class User {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Integer id;
-
 	private String name;
-
 	private String username;
-
 	private String password;
+	@ManyToMany(mappedBy = "recipients")
+	private Set<Message> messages;
 
 	@ManyToOne
 	@JoinColumn(name = "role_id")
