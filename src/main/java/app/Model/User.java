@@ -8,7 +8,7 @@ public class User {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Integer id;
+	private long id;
 	private String name;
 	private String username;
 	private String password;
@@ -19,7 +19,7 @@ public class User {
 	@JoinColumn(name = "role_id")
 	private Role role;
 
-	public Integer getId() {
+	public long getId() {
 		return id;
 	}
 

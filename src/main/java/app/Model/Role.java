@@ -6,13 +6,12 @@ import javax.persistence.*;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-
+    private long id;
     private String name;
-
     private String description;
 
-    public Integer getId() {
+
+    public long getId() {
         return id;
     }
 

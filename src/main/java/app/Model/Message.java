@@ -8,7 +8,7 @@ import java.util.Set;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private long id;
     private Date time;
     private String title;
     private String content;
@@ -23,11 +23,11 @@ public class Message {
     private boolean isAcknowledged;
     private boolean isRead;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
