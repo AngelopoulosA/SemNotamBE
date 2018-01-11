@@ -9,14 +9,14 @@ public class Context {
     private List<Context> children;
     private List<Context> parents;
     private Map<String, String> parameterValues;
-    private Map<String, String> rules;
+    private List<Rule>  rules;
     private List<String> ruleDevelopers;
 
     public Context() {
         this.setChildren(new LinkedList<>());
         this.setParents(new LinkedList<>());
         this.setParameterValues(new Hashtable<>());
-        this.setRules(new Hashtable<>());
+        this.setRules(new LinkedList<>());
         this.setRuleDevelopers(new LinkedList<>());
     }
 
@@ -58,11 +58,11 @@ public class Context {
         this.parameterValues = parameterValues;
     }
 
-    public Map<String, String> getRules() {
+    public List<Rule>  getRules() {
         return rules;
     }
 
-    public void setRules(Map<String, String> rules) {
+    public void setRules(List<Rule> rules) {
         this.rules = rules;
     }
 

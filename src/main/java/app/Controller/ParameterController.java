@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(path="/parameters")
+@CrossOrigin
 public class ParameterController {
 
 	@Autowired
@@ -22,12 +23,12 @@ public class ParameterController {
 
 	@GetMapping(path="")
 	public @ResponseBody
-    List<String> getAllParameters () {
+    List<Parameter> getAllParameters () {
         try {
             CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
                     "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
             fl.setDebug(false);
-            return fl.getParameters();
+            return fl.getParameters().stream().map(p -> new Parameter(p)).collect(Collectors.toList());
         } catch (IOException e) {
             return null;
         }
