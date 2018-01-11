@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+@CrossOrigin
 @Controller    // This means that this class is a Controller
 @RequestMapping(path="/users") // This means URL's start with /demo (after Application path)
 public class UserController {
