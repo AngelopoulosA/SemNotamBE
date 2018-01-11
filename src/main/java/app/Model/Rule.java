@@ -24,4 +24,7 @@ public class Rule {
         this.id = id;
         this.body = body;
     }
+
+    public Rule() {
+    }
 }

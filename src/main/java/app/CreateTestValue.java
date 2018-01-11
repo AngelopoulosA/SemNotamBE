@@ -2,7 +2,6 @@ package app;
 
 import app.Model.Role;
 import app.Model.User;
-import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;

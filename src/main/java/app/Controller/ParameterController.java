@@ -80,17 +80,19 @@ public class ParameterController {
 
     @GetMapping(path="/withValues")
     public @ResponseBody
-    Map<String,List<String>> getParameterWithValues () {
+    List<Parameter> getParameterWithValues () {
         try {
             CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
                     "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
             fl.setDebug(false);
 
-            Map<String,List<String>> parametersWithValues = new HashMap<>();
+            List<Parameter> parametersWithValues = new LinkedList<>();
             List<String> parameters = fl.getParameters();
-            for (String parameter : parameters) {
-                List<String> parameterValues = fl.getParameterParameterValues(parameter);
-                parametersWithValues.put(parameter, parameterValues);
+            for (String paramName : parameters) {
+                List<String> parameterValues = fl.getParameterParameterValues(paramName);
+                Parameter parameter = new Parameter(paramName);
+                parameter.setParameterValues(parameterValues.stream().map(pv -> new ParameterValue(pv)).collect(Collectors.toList()));
+                parametersWithValues.add(parameter);
             }
             return parametersWithValues;
 

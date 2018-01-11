@@ -9,11 +9,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 
+@CrossOrigin
 @Controller
 @RequestMapping(path = "/messages")
 public class MessageController {
@@ -28,33 +30,39 @@ public class MessageController {
     }
 
 
-    @PostMapping(path="/add")
+    @PostMapping(path="")
     public @ResponseBody String addMessage (@RequestBody Message message){
 
         if (message.getTitle().isEmpty() || message.getContent().isEmpty()){
             return "missing parameters";
         }
 
-        long userId = message.getTriggeredUser().getId();
+        long userId = message.getSender().getId();
         User user = userRepository.findOne(userId);
 
         if (user == null){
             return "User not found";
         }
 
+        List<User> recipients = new LinkedList<>();
+        for(User recipient : message.getRecipients()) {
+            User dbRecipient = userRepository.findOne(recipient.getId());
+            recipients.add(dbRecipient);
+        }
 
         Message newMessage = new Message();
         newMessage.setTime(new Date());
         newMessage.setTitle(message.getTitle());
         newMessage.setContent(message.getContent());
         newMessage.setType(message.getType());
-        newMessage.setTriggeredUser(user);
+        newMessage.setSender(user);
+        newMessage.setRecipients(recipients);
         messageRepository.save(newMessage);
 
         return "ok";
     }
 
-    @GetMapping(path = "/all")
+    @GetMapping(path = "")
     public @ResponseBody Iterable<Message> getAllMessages(){
         return this.messageRepository.findAll();
     }

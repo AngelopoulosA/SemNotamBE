@@ -82,7 +82,10 @@ public class ContextController {
                 context.getParameterValues().put(parameterValue[0], parameterValue[1]);
             }
 
-            context.setRuleDevelopers(contextDBRepository.findOne(id).getRuleDevelopers());
+            ContextDB contextDB = contextDBRepository.findOne(id);
+            if(contextDB != null) {
+                context.setRuleDevelopers(contextDB.getRuleDevelopers());
+            }
             context.setRules(getRules(fl, id));
             return context;
 
@@ -122,14 +125,14 @@ public class ContextController {
 
     @DeleteMapping(path="/{id}/rule/{ruleId}")
     public @ResponseBody
-    List<Rule> deleteRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId) {
+    Context deleteRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId) {
         try {
             CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
                     "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
             fl.setDebug(false);
 
             boolean result = fl.delRule(id, ruleId);
-            return getRules(fl, id);
+            return getContextDetails(id);
 
         } catch (Exception e) {
             e.printStackTrace();
