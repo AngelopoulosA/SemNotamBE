@@ -19,4 +19,9 @@ public class Rule {
     public void setBody(String body) {
         this.body = body;
     }
+
+    public Rule(String id, String body) {
+        this.id = id;
+        this.body = body;
+    }
 }

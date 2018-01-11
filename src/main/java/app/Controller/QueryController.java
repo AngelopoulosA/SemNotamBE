@@ -15,6 +15,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping(path="/query")
+@CrossOrigin
 public class QueryController {
 
 	@Autowired

@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(path="/contexts")
+@CrossOrigin
 public class ContextController {
 
 	@Autowired
@@ -85,17 +86,18 @@ public class ContextController {
         }
     }
 
-    private Map<String, String> getRules(CBRInterface fl, String id) throws Exception {
-        HashMap<String, String> rules = fl.getRules(id);
-        for (Map.Entry<String, String> rule : rules.entrySet()) {
-            rules.replace(rule.getKey(), rule.getValue().replace("@!{"+rule.getKey()+"}\r\n", ""));
+    private List<Rule> getRules(CBRInterface fl, String id) throws Exception {
+        HashMap<String, String> rawRules = fl.getRules(id);
+        List<Rule> rules = new LinkedList<>();
+        for (Map.Entry<String, String> rule : rawRules.entrySet()) {
+            rules.add(new Rule(rule.getKey(), rule.getValue().replace("@!{"+rule.getKey()+"}\r\n", "")));
         }
         return rules;
     }
 
     @PostMapping(path="/{id}/rule")
     public @ResponseBody
-    Map<String, String> addRule (@PathVariable(value="id") String id, @RequestBody Rule rule) {
+    List<Rule> addRule (@PathVariable(value="id") String id, @RequestBody Rule rule) {
         try {
             CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
                     "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
@@ -114,7 +116,7 @@ public class ContextController {
 
     @DeleteMapping(path="/{id}/rule/{ruleId}")
     public @ResponseBody
-    Map<String, String> deleteRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId) {
+    List<Rule> deleteRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId) {
         try {
             CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
                     "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
@@ -131,7 +133,7 @@ public class ContextController {
 
     @PutMapping(path="/{id}/rule/{ruleId}")
     public @ResponseBody
-    Map<String, String> addOrUpdateRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId, @RequestBody Rule rule) {
+    List<Rule> addOrUpdateRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId, @RequestBody Rule rule) {
         try {
             CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
                     "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
