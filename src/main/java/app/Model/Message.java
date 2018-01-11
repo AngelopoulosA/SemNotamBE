@@ -12,9 +12,11 @@ public class Message {
     private Date time;
     private String title;
     private String content;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User triggeredUser;
+
     @ManyToMany
     @JoinTable()
     private Set<User> recipients;

@@ -10,7 +10,7 @@ public class Context {
     private List<Context> parents;
     private Map<String, String> parameterValues;
     private List<Rule>  rules;
-    private List<String> ruleDevelopers;
+    private List<User> ruleDevelopers;
 
     public Context() {
         this.setChildren(new LinkedList<>());
@@ -66,11 +66,11 @@ public class Context {
         this.rules = rules;
     }
 
-    public List<String> getRuleDevelopers() {
+    public List<User> getRuleDevelopers() {
         return ruleDevelopers;
     }
 
-    public void setRuleDevelopers(List<String> ruleDevelopers) {
+    public void setRuleDevelopers(List<User> ruleDevelopers) {
         this.ruleDevelopers = ruleDevelopers;
     }
 }

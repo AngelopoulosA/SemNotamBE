@@ -9,10 +9,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 
 @Controller
-@RequestMapping(path = "/message")
+@RequestMapping(path = "/messages")
 public class MessageController {
 
     private final MessageRepository messageRepository;
@@ -54,6 +57,14 @@ public class MessageController {
     @GetMapping(path = "/all")
     public @ResponseBody Iterable<Message> getAllMessages(){
         return this.messageRepository.findAll();
-
     }
+
+/*
+    @RequestMapping(value="/messageByUserId", params="id", method = GET)
+    public @ResponseBody
+    List<Message> getMessagesFromUser(@RequestParam("id") long id) {
+        return messageRepository.findByUserId(id);
+    }
+*/
+
 }

@@ -12,12 +12,27 @@ public class User {
 	private String name;
 	private String username;
 	private String password;
+
 	@ManyToMany(mappedBy = "recipients")
 	private Set<Message> messages;
 
 	@ManyToOne
 	@JoinColumn(name = "role_id")
 	private Role role;
+
+	@ManyToMany(mappedBy = "ruleDevelopers")
+	private Set<ContextDB> contexts;
+
+	public User(){
+
+	}
+
+	public User (String name, String username, String password, Role role){
+		this.name = name;
+		this.username = username;
+		this.password = password;
+		this.role = role;
+	}
 
 	public long getId() {
 		return id;

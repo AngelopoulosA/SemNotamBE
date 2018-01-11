@@ -1,6 +1,8 @@
 package app.Controller;
 
+import app.Model.ContextDB;
 import app.Model.Rule;
+import app.Repository.ContextDBRepository;
 import dke.pr.cli.CBRInterface;
 import app.Model.Context;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +18,12 @@ import java.util.stream.Collectors;
 @CrossOrigin
 public class ContextController {
 
+    private final ContextDBRepository contextDBRepository;
+
 	@Autowired
-	public ContextController() {
-    };
+	public ContextController(ContextDBRepository contextDBRepository) {
+        this.contextDBRepository = contextDBRepository;
+	};
 
 	@GetMapping(path="")
 	public @ResponseBody
@@ -77,6 +82,7 @@ public class ContextController {
                 context.getParameterValues().put(parameterValue[0], parameterValue[1]);
             }
 
+            context.setRuleDevelopers(contextDBRepository.findOne(id).getRuleDevelopers());
             context.setRules(getRules(fl, id));
             return context;
 

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
-@RequestMapping(path="/role")
+@RequestMapping(path="/roles")
 public class RoleController {
 
     private final RoleRepository roleRepository;
@@ -19,7 +19,7 @@ public class RoleController {
         this.roleRepository = roleRepository;
     }
 
-    @PostMapping(path="/add")
+    @PostMapping(path="")
     public @ResponseBody String addNewRole (@RequestBody Role role) {
 
         if (role.getName().isEmpty()|| role.getDescription().isEmpty()){
@@ -35,13 +35,28 @@ public class RoleController {
         return "Saved" + newRole.getName() + " " + newRole.getDescription();
     }
 
-    @GetMapping(path = "/all")
+    @GetMapping(path = "")
     public @ResponseBody Iterable<Role> getAllRoles(){
         return roleRepository.findAll();
     }
 
-    @RequestMapping(value="/role", params="id", method = GET)
-    public @ResponseBody Role getRoleById(@RequestParam("id") long id) {
+
+    @GetMapping(path="/{id}")
+    public @ResponseBody
+    Role getParameterDetails (@PathVariable(value="id") long id) {
         return roleRepository.findOne(id);
+    }
+
+    @DeleteMapping(path="/{id}")
+    public @ResponseBody String deleteUserById(@PathVariable(value="id") long id) {
+        Role role = new Role();
+        role = roleRepository.findOne(id);
+
+        if(role != null){
+            roleRepository.delete(role);
+            return role.getName() + " is deleted";
+        }
+
+        return "Role cannot deleted!";
     }
 }
