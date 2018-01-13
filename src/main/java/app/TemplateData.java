@@ -1,5 +1,6 @@
 package app;
 
+import app.Model.Message;
 import app.Model.Role;
 import app.Model.User;
 import org.springframework.web.client.RestTemplate;
@@ -13,6 +14,22 @@ public class TemplateData {
     public static final String REST_SERVICE_URI = "http://localhost:8080";
     public static Boolean isCreated = false;
 
+
+    public TemplateData(){
+        if (getRole(1)== null){
+            this.isCreated = true;
+            createRoles();
+            createUsers();
+            createMessages();
+        } else {
+            System.out.println("\nTemplate Data are available!!!\n");
+            listAllRoles();
+            listAllUsers();
+            listAllMessageFromUser();
+        }
+    }
+
+
     /* GET */
     @SuppressWarnings("unchecked")
     private void listAllUsers(){
@@ -24,6 +41,23 @@ public class TemplateData {
         if(usersMap!=null){
             for(LinkedHashMap<String, Object> map : usersMap){
                 System.out.println("User : id="+map.get("id")+", Name="+map.get("name")+", Username="+map.get("username")+", password="+map.get("password"));;
+            }
+        }else{
+            System.out.println("No user exist----------");
+        }
+    }
+
+    /* GET */
+    @SuppressWarnings("unchecked")
+    private void listAllMessageFromUser(){
+        System.out.println("\nTesting listAllMessagesFromUser API-----------\n");
+
+        RestTemplate restTemplate = new RestTemplate();
+        List<LinkedHashMap<String, Object>> usersMap = restTemplate.getForObject(REST_SERVICE_URI+"/messages/fromUser/2", List.class);
+
+        if(usersMap!=null){
+            for(LinkedHashMap<String, Object> map : usersMap){
+                System.out.println("User : id="+map.get("id")+", Title="+map.get("title")+", content="+map.get("content"));
             }
         }else{
             System.out.println("No user exist----------");
@@ -49,22 +83,35 @@ public class TemplateData {
     }
 
     /* GET */
+    @SuppressWarnings("unchecked")
+    private void listAllMessages(){
+        System.out.println("" +
+                "\nTesting listAllMessages API-----------\n");
+
+        RestTemplate restTemplate = new RestTemplate();
+        List<LinkedHashMap<String, Object>> messageMap = restTemplate.getForObject(REST_SERVICE_URI+"/messages/", List.class);
+
+        if(messageMap!=null){
+            for(LinkedHashMap<String, Object> map : messageMap){
+                System.out.println("Message : id="+map.get("id")+", Name="+map.get("name")+", description="+map.get("description"));;
+            }
+        }else{
+            System.out.println("No message exist----------");
+        }
+    }
+
+    /* GET */
     public static User getUser (long userId){
         RestTemplate restTemplate = new RestTemplate();
         User user = restTemplate.getForObject(REST_SERVICE_URI+"/users/"+userId, User.class);
         return user;
     }
 
-    public TemplateData(){
-        if (getRole(1)== null){
-            this.isCreated = true;
-            createRoles();
-            createUsers();
-        } else {
-            System.out.println("\nTemplate Data are available!!!\n");
-            listAllRoles();
-            listAllUsers();
-        }
+    /* GET */
+    public static Message getMessage (long messageId){
+        RestTemplate restTemplate = new RestTemplate();
+        Message message = restTemplate.getForObject(REST_SERVICE_URI+"/messages/"+messageId, Message.class);
+        return message;
     }
 
     /* POST */
@@ -112,15 +159,40 @@ public class TemplateData {
 
         user = new User("Dominik", "dominik", "do", getRole(3));
         result = restTemplate.postForObject(REST_SERVICE_URI+"/users/", user, String.class) ;
-        System.out.println("\n Role : "+result + "\n");
+        System.out.println("\n User : "+result + "\n");
 
         user = new User("Peter", "peter", "pe", getRole(2));
         result = restTemplate.postForObject(REST_SERVICE_URI+"/users/", user, String.class) ;
-        System.out.println("\n Role : "+result + "\n");
+        System.out.println("\n User : "+result + "\n");
 
         user = new User("Anna", "anna", "an", getRole(4));
         result = restTemplate.postForObject(REST_SERVICE_URI+"/users/", user, String.class) ;
-        System.out.println("\n Role : "+result + "\n");
+        System.out.println("\n User : "+result + "\n");
+    }
+
+    /* POST */
+    public void createMessages() {
+        Message message;
+        String result;
+
+        System.out.println("Testing create Message API----------");
+        RestTemplate restTemplate = new RestTemplate();
+
+        message = new Message("Nachrichtenkopf 1", "Testnachricht 1", getUser(1));
+        result = restTemplate.postForObject(REST_SERVICE_URI+"/messages/", message, String.class) ;
+        System.out.println("\n Message : "+result + "\n");
+
+        message = new Message("Nachrichtenkopf 2", "Testnachricht 2", getUser(2));
+        result = restTemplate.postForObject(REST_SERVICE_URI+"/messages/", message, String.class) ;
+        System.out.println("\n Message : "+result + "\n");
+
+        message = new Message("Nachrichtenkopf 3", "Testnachricht 3", getUser(3));
+        result = restTemplate.postForObject(REST_SERVICE_URI+"/messages/", message, String.class) ;
+        System.out.println("\n Message : "+result + "\n");
+
+        message = new Message("Nachrichtenkopf 4", "Testnachricht 4", getUser(1));
+        result = restTemplate.postForObject(REST_SERVICE_URI+"/messages/", message, String.class) ;
+        System.out.println("\n Message : "+result + "\n");
     }
 
 /*

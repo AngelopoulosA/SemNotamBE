@@ -25,6 +25,16 @@ public class Message {
     private boolean isAcknowledged;
     private boolean isRead;
 
+    public Message(){
+
+    }
+
+    public Message(String title, String content, User triggeredUser){
+        this.title = title;
+        this.content = content;
+        this.triggeredUser = triggeredUser;
+    }
+
     public long getId() {
         return id;
     }
