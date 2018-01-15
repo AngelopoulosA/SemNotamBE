@@ -49,7 +49,7 @@ public class RoleController {
     }
 
     @DeleteMapping(path="/{id}")
-    public @ResponseBody String deleteUserById(@PathVariable(value="id") long id) {
+    public @ResponseBody String deleteRoleById(@PathVariable(value="id") long id) {
         Role role = new Role();
         role = roleRepository.findOne(id);
 

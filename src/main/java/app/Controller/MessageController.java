@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -28,7 +30,6 @@ public class MessageController {
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
     }
-
 
     @PostMapping(path="")
     public @ResponseBody String addMessage (@RequestBody Message message){
@@ -67,12 +68,38 @@ public class MessageController {
         return this.messageRepository.findAll();
     }
 
-/*
-    @RequestMapping(value="/messageByUserId", params="id", method = GET)
-    public @ResponseBody
-    List<Message> getMessagesFromUser(@RequestParam("id") long id) {
-        return messageRepository.findByUserId(id);
+    @DeleteMapping(path="/{id}")
+    public @ResponseBody String deleteMessageById(@PathVariable(value="id") long id) {
+        Message message = new Message();
+        message = messageRepository.findOne(id);
+
+        if(message != null){
+            messageRepository.delete(message);
+            return message.getTitle() + " is deleted";
+        }
+
+        return "Message cannot deleted!";
     }
-*/
+
+    @GetMapping(path="/{id}")
+    public @ResponseBody
+    Message getMessageDetails (@PathVariable(value="id") long id) {
+        return messageRepository.findOne(id);
+    }
+
+
+    @GetMapping(path="/fromUser/{id}")
+    public @ResponseBody
+    List<Message> getMessagesFromUser(@PathVariable("id") long id) {
+        Iterable<Message> allMessages = messageRepository.findAll();
+        List<Message> filteredMessages = new ArrayList<>();
+        for(Message message : allMessages){
+            if(message.getTriggeredUser().getId() == id){
+                filteredMessages.add(message);
+            }
+        }
+        return filteredMessages;
+    }
+
 
 }

@@ -51,26 +51,26 @@ closure[covers->{runwayClosure,apronClosure}].
 
 //---Contexts
 allInterests_allFlightPhases_allEventScenarios:AIMCtx[Interest->allInterests,FlightPhase->allFlightPhases,EventScenario->allEventScenarios,
-											   file->'C:/TEMP/dke/SemNotamBE/CBRM/Contexts/allInterests_allFlightPhases_allEventScenarios.flr'].
+											   file->'C:/study/prose_dke/SemNotamBE/CBRM/Contexts/allInterests_allFlightPhases_allEventScenarios.flr'].
 aircraft_allFlightPhases_obstruction:AIMCtx[Interest->aircraft,FlightPhase->allFlightPhases,EventScenario->obstruction,
-											   file->'C:/TEMP/dke/SemNotamBE/CBRM/Contexts/aircraft_allFlightPhases_obstruction.flr'].
+											   file->'C:/study/prose_dke/SemNotamBE/CBRM/Contexts/aircraft_allFlightPhases_obstruction.flr'].
 helicopter_allFlightPhases_obstruction:AIMCtx[Interest->helicopter,FlightPhase->allFlightPhases,EventScenario->obstruction,
-											   file->'C:/TEMP/dke/SemNotamBE/CBRM/Contexts/helicopter_allFlightPhases_obstruction.flr'].
+											   file->'C:/study/prose_dke/SemNotamBE/CBRM/Contexts/helicopter_allFlightPhases_obstruction.flr'].
 aircraft_onground_closure:AIMCtx[Interest->aircraft,FlightPhase->onground,EventScenario->closure,
-											   file->'C:/TEMP/dke/SemNotamBE/CBRM/Contexts/aircraft_onground_closure.flr'].
+											   file->'C:/study/prose_dke/SemNotamBE/CBRM/Contexts/aircraft_onground_closure.flr'].
 landplane_onground_runwayClosure:AIMCtx[Interest->landplane,FlightPhase->onground,EventScenario->runwayClosure,
-											   file->'C:/TEMP/dke/SemNotamBE/CBRM/Contexts/landplane_onground_runwayClosure.flr'].
+											   file->'C:/study/prose_dke/SemNotamBE/CBRM/Contexts/landplane_onground_runwayClosure.flr'].
 landplane_allFlightPhases_specialPort:AIMCtx[Interest->landplane,FlightPhase->allFlightPhases,EventScenario->specialPort,
-											   file->'C:/TEMP/dke/SemNotamBE/CBRM/Contexts/landplane_allFlightPhases_specialPort.flr'].
+											   file->'C:/study/prose_dke/SemNotamBE/CBRM/Contexts/landplane_allFlightPhases_specialPort.flr'].
 landplane_allFlightPhases_aerodromeBeaconStatus:AIMCtx[Interest->landplane,FlightPhase->allFlightPhases,EventScenario->aerodromeBeaconStatus,
-											   file->'C:/TEMP/dke/SemNotamBE/CBRM/Contexts/landplane_allFlightPhases_aerodromeBeaconStatus.flr'].
+											   file->'C:/study/prose_dke/SemNotamBE/CBRM/Contexts/landplane_allFlightPhases_aerodromeBeaconStatus.flr'].
 aircraft_onground_aerodromeEquipment:AIMCtx[Interest->aircraft,FlightPhase->onground,EventScenario->aerodromeEquipment,
-											   file->'C:/TEMP/dke/SemNotamBE/CBRM/Contexts/aircraft_onground_aerodromeEquipment.flr'].
+											   file->'C:/study/prose_dke/SemNotamBE/CBRM/Contexts/aircraft_onground_aerodromeEquipment.flr'].
 
 
 aircraft_onground_allEventScenarios:AIMCtx[Interest->aircraft,FlightPhase->onground,EventScenario->allEventScenarios,
-											   file->'C:/TEMP/dke/SemNotamBE/CBRM/Contexts/aircraft_onground_allEventScenarios.flr'].
+											   file->'C:/study/prose_dke/SemNotamBE/CBRM/Contexts/aircraft_onground_allEventScenarios.flr'].
 
 
 aircraft_allFlightPhases_closure:AIMCtx[Interest->aircraft,FlightPhase->allFlightPhases,EventScenario->closure,
-											   file->'C:/TEMP/dke/SemNotamBE/CBRM/Contexts/aircraft_allFlightPhases_closure.flr'].
+											   file->'C:/study/prose_dke/SemNotamBE/CBRM/Contexts/aircraft_allFlightPhases_closure.flr'].
