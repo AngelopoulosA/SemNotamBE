@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -41,6 +42,12 @@ public class MessageController {
 
         if (user == null){
             return "User not found";
+        }
+
+        List<User> recipients = new LinkedList<>();
+        for(User recipient : message.getRecipients()) {
+            User dbRecipient = userRepository.findOne(recipient.getId());
+            recipients.add(dbRecipient);
         }
 
         Message newMessage = new Message();

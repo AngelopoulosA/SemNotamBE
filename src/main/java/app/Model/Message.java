@@ -106,4 +106,8 @@ public class Message {
     public void setRead(boolean read) {
         isRead = read;
     }
+
+    public Set<User> getRecipients() {
+        return recipients;
+    }
 }

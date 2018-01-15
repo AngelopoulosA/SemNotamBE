@@ -7,7 +7,11 @@ import app.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import java.util.Optional;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+@CrossOrigin
 @Controller    // This means that this class is a Controller
 @RequestMapping(path="/users") // This means URL's start with /demo (after Application path)
 public class UserController {
