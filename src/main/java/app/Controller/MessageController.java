@@ -17,6 +17,7 @@ import java.util.stream.StreamSupport;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 
+@CrossOrigin
 @Controller
 @RequestMapping(path = "/messages")
 public class MessageController {
@@ -37,7 +38,7 @@ public class MessageController {
             return "missing parameters";
         }
 
-        long userId = message.getTriggeredUser().getId();
+        long userId = message.getSender().getId();
         User user = userRepository.findOne(userId);
 
         if (user == null){
@@ -55,7 +56,8 @@ public class MessageController {
         newMessage.setTitle(message.getTitle());
         newMessage.setContent(message.getContent());
         newMessage.setType(message.getType());
-        newMessage.setTriggeredUser(user);
+        newMessage.setSender(user);
+        newMessage.setRecipients(recipients);
         messageRepository.save(newMessage);
 
         return "ok";

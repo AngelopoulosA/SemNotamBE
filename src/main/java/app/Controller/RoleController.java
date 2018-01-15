@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
+@CrossOrigin
 @RequestMapping(path="/roles")
 public class RoleController {
 

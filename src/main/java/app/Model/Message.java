@@ -2,6 +2,7 @@ package app.Model;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -15,11 +16,11 @@ public class Message {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User triggeredUser;
+    private User sender;
 
     @ManyToMany
     @JoinTable()
-    private Set<User> recipients;
+    private List<User> recipients;
     private String type;
     private String affectedElement;
     private boolean isAcknowledged;
@@ -67,12 +68,20 @@ public class Message {
         this.content = content;
     }
 
-    public User getTriggeredUser() {
-        return triggeredUser;
+    public User getSender() {
+        return sender;
     }
 
-    public void setTriggeredUser(User triggeredUser) {
-        this.triggeredUser = triggeredUser;
+    public void setSender(User sender) {
+        this.sender = sender;
+    }
+
+    public List<User> getRecipients() {
+        return recipients;
+    }
+
+    public void setRecipients(List<User> recipients) {
+        this.recipients = recipients;
     }
 
     public String getType() {
