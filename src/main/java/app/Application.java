@@ -13,7 +13,7 @@ public class Application implements CommandLineRunner{
 
     @Override
     public void run(String... args) throws Exception {
-        TemplateData template = new TemplateData();
+        CreateTestValue template = new CreateTestValue();
 
     }
 }

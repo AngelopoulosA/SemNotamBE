@@ -9,13 +9,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 
-public class TemplateData {
+public class CreateTestValue {
 
     public static final String REST_SERVICE_URI = "http://localhost:8080";
     public static Boolean isCreated = false;
 
 
-    public TemplateData(){
+    public CreateTestValue(){
         if (getRole(1)== null){
             this.isCreated = true;
             createRoles();
