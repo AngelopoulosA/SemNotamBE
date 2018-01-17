@@ -2,7 +2,9 @@ package app.Controller;
 
 import app.Model.ContextDB;
 import app.Model.Rule;
+import app.Model.User;
 import app.Repository.ContextDBRepository;
+import app.Repository.UserRepository;
 import dke.pr.cli.CBRInterface;
 import app.Model.Context;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +21,12 @@ import java.util.stream.Collectors;
 public class ContextController {
 
     private final ContextDBRepository contextDBRepository;
+    private final UserRepository userRepository;
 
 	@Autowired
-	public ContextController(ContextDBRepository contextDBRepository) {
+	public ContextController(ContextDBRepository contextDBRepository, UserRepository userRepository) {
         this.contextDBRepository = contextDBRepository;
+        this.userRepository = userRepository;
 	};
 
 	@GetMapping(path="")
@@ -106,7 +110,7 @@ public class ContextController {
 
     @PostMapping(path="/{id}/rule")
     public @ResponseBody
-    List<Rule> addRule (@PathVariable(value="id") String id, @RequestBody Rule rule) {
+    Context addRule (@PathVariable(value="id") String id, @RequestBody Rule rule) {
         try {
             CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
                     "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
@@ -114,7 +118,7 @@ public class ContextController {
 
             boolean result = fl.addRule(id, "@!{"+rule.getId()+"}\r\n"+rule.getBody());
             if(result) {
-                return getRules(fl, id);
+                return getContextDetails(id);
             }
             return null;
         } catch (Exception e) {
@@ -142,7 +146,7 @@ public class ContextController {
 
     @PutMapping(path="/{id}/rule/{ruleId}")
     public @ResponseBody
-    List<Rule> addOrUpdateRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId, @RequestBody Rule rule) {
+    Context addOrUpdateRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId, @RequestBody Rule rule) {
         try {
             CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
                     "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
@@ -192,6 +196,38 @@ public class ContextController {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @PostMapping(path="/{id}/ruleDeveloper")
+    public @ResponseBody
+    Context addRuleDeveloper (@PathVariable(value="id") String id, @RequestBody User user) {
+        try {
+            ContextDB context = contextDBRepository.findOne(id);
+            context.getRuleDevelopers().add(user);
+            contextDBRepository.save(context);
+
+            return getContextDetails(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @DeleteMapping(path="/{id}/ruleDeveloper/{userId}")
+    public @ResponseBody
+    Context deleteRuleDeveloper (@PathVariable(value="id") String id, @PathVariable(value="userId") Long userId) {
+        try {
+            ContextDB context = contextDBRepository.findOne(id);
+            User user = userRepository.findOne(userId);
+            context.getRuleDevelopers().remove(user);
+            contextDBRepository.save(context);
+
+            return getContextDetails(id);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

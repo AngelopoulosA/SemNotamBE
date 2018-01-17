@@ -66,6 +66,13 @@ public class UserController {
 		return "User cannot deleted!";
 	}
 
+    @PostMapping(path="/login")
+    public @ResponseBody User login(@RequestBody User loginRequest) {
+        User user = userRepository.findFirstByUsernameAndPassword(loginRequest.getUsername(), loginRequest.getPassword());
+
+        return user;
+    }
+
 	@GetMapping(path="/{id}")
 	public @ResponseBody
 	User getParameterDetails (@PathVariable(value="id") long id) {
