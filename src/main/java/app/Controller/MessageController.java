@@ -94,7 +94,7 @@ public class MessageController {
         Iterable<Message> allMessages = messageRepository.findAll();
         List<Message> filteredMessages = new ArrayList<>();
         for(Message message : allMessages){
-            if(message.getTriggeredUser().getId() == id){
+            if(message.getSender().getId() == id){
                 filteredMessages.add(message);
             }
         }

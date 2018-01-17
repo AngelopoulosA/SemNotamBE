@@ -30,10 +30,10 @@ public class Message {
 
     }
 
-    public Message(String title, String content, User triggeredUser){
+    public Message(String title, String content, User sender){
         this.title = title;
         this.content = content;
-        this.triggeredUser = triggeredUser;
+        this.sender = sender;
     }
 
     public long getId() {
@@ -114,9 +114,5 @@ public class Message {
 
     public void setRead(boolean read) {
         isRead = read;
-    }
-
-    public Set<User> getRecipients() {
-        return recipients;
     }
 }
