@@ -159,7 +159,7 @@ public class ParameterController {
 
     @PostMapping(path="/{id}")
     public @ResponseBody
-    boolean addParameterValue (@PathVariable(value="id") String parameterId, @RequestBody ParameterValue parameterValue) {
+    Parameter addParameterValue (@PathVariable(value="id") String parameterId, @RequestBody ParameterValue parameterValue) {
         try {
             CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
                     "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
@@ -167,25 +167,30 @@ public class ParameterController {
 
             String[] parents = parameterValue.getParents().stream().map(p -> p.getName()).toArray(String[]::new);
             boolean result = fl.addParameterValue(parameterId, parameterValue.getName(), parents, null);
-            return result;
+            if(result) {
+                return getParameterDetails(parameterId);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
+        return null;
     }
 
     @DeleteMapping(path="/{id}/{valueId}")
     public @ResponseBody
-    boolean deleteParameterValue (@PathVariable(value="id") String parameterId, @PathVariable(value="valueId") String parameterValueId) {
+    Parameter deleteParameterValue (@PathVariable(value="id") String parameterId, @PathVariable(value="valueId") String parameterValueId) {
         try {
             CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
                     "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
             fl.setDebug(false);
 
-            return fl.delParameterValue(parameterValueId);
+            boolean result = fl.delParameterValue(parameterValueId);
+            if(result) {
+                return getParameterDetails(parameterId);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
+        return null;
     }
 }

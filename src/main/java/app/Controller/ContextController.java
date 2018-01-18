@@ -174,7 +174,8 @@ public class ContextController {
             String ctxDefinition = context.getName()+":AIMCtx["+paramValues+",file->'"+ctxFile+"'].";
             boolean result = fl.addCtx(ctxDefinition, ctxFile);
             if(result) {
-                return getContextDetails(context.getName());
+                Thread.sleep(1000);
+                return getAllContexts();
             }
             return null;
         } catch (Exception e) {
@@ -187,11 +188,14 @@ public class ContextController {
     public @ResponseBody
     boolean deleteContext (@PathVariable(value="id") String id) {
         try {
-            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
+            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr", "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
             fl.setDebug(false);
 
             boolean result = fl.delCtx(id, true);
+            if(result) {
+                Thread.sleep(1000);
+                fl.restart();
+            }
             return result;
         } catch (Exception e) {
             e.printStackTrace();
