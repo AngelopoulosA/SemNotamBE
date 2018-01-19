@@ -29,10 +29,10 @@ public class CBRInterface extends Flora2CLI {
 
 	protected static final String MODEL_MODULE = "ctxModel";
 	protected static final String BC_MODULE = "bc";
-	private final String CONTEXT_CLASS;
-	private final String BC_CLASS;
-	private final String F_CTX_MODEL;
-	private final String F_BC;
+	private String CONTEXT_CLASS;
+	private String BC_CLASS;
+	private String F_CTX_MODEL;
+	private String F_BC;
 
 	/**
 	 * Initializes a Flora 2 shell with the CBR Model and the business cases,
@@ -43,9 +43,30 @@ public class CBRInterface extends Flora2CLI {
 	 * @param contextClass
 	 * @throws IOException
 	 */
+	@Deprecated
 	public CBRInterface(String fCtxModel, String fBc, String contextClass,
 						String bcClass) throws IOException {
 		super();
+		this.CONTEXT_CLASS = contextClass;
+		this.BC_CLASS = bcClass;
+		this.F_BC = fBc;
+		this.F_CTX_MODEL = fCtxModel;
+		if (!loadFile(fCtxModel, MODEL_MODULE))
+			throw new IOException("Loading module failed");
+		if (!loadFile(fBc, BC_MODULE))
+			throw new IOException("Loading module failed");
+	}
+
+	/**
+	 * Constructor that does not initiate anything
+	 */
+	public CBRInterface()  {
+		super(false);
+	}
+
+	public void initiate(String flora2Path, String fCtxModel, String fBc, String contextClass, String bcClass) throws IOException {
+		this.flora2Path = flora2Path;
+		start();
 		this.CONTEXT_CLASS = contextClass;
 		this.BC_CLASS = bcClass;
 		this.F_BC = fBc;
@@ -88,13 +109,15 @@ public class CBRInterface extends Flora2CLI {
 	 * transCtx(?X,?Y):-?X:AIMCtx[specialises->?Z],?Z[specialises->?Y], \+ (?X =
 	 * ?Z), \+ (?Z = ?Y). - in ctxModelAIM.flr or ctxModel.flr
 	 *
+	 * eqCtx(?c1,?c2):- ?c1:AIMCtx, ?c2:AIMCtx, true{forall(?v)^(?c1[?p:Parameter->?v] ~~> ?c2[?p:Parameter->?v])}.
+	 *
 	 * @return List of context-pairs [subCtx,superCtx]
 	 * @throws IOException
 	 */
 	public List<String[]> getCtxHierarchy() throws IOException {
 		String cmd = String
-				.format("?subCtx:%s[specialises->?superCtx]@%s,\\+ (?superCtx =?subCtx),\\naf transCtx(?subCtx,?superCtx)@%s.",
-						CONTEXT_CLASS, MODEL_MODULE, MODEL_MODULE);
+				.format("?subCtx:%s[specialises->?superCtx]@%s,\\naf eqCtx(?subCtx,?superCtx)@%s,\\naf transCtx(?subCtx,?superCtx)@%s.",
+						CONTEXT_CLASS,MODEL_MODULE, MODEL_MODULE, MODEL_MODULE);
 		String ret = issueCommand(cmd);
 		return parseMultipleVars(ret, 2);
 	}
@@ -476,7 +499,7 @@ public class CBRInterface extends Flora2CLI {
 	public boolean delRule(String ctx, String ruleID) throws Exception {
 		String rules = this.getCtxFile(ctx).replace("'", "");
 		return replaceRegExPatternFromFile(new File(rules), "(?s)\\@!\\{"
-				+ ruleID + ".*\\.", "");
+				+ ruleID + "[\\s,}].*\\.", "");
 	}
 
 	// ---------------context
@@ -555,6 +578,13 @@ public class CBRInterface extends Flora2CLI {
 	 */
 	public boolean delParameter(String pName) throws IOException {
 		File model = new File(F_CTX_MODEL);
+
+		List<String> paramValues = getParameterParameterValues(pName);
+
+		for(String val : paramValues){
+			delParameterValue(val);
+		}
+
 		removeRegExPatternFromFile(model, "(?s)" + pName + ":Parameter\\.");
 		removeRegExPatternFromFile(model, "(?s)" + pName + "\\[.*\\.");
 		removeRegExPatternFromFile(model, "(?s)\\{[\\w, ]*\\}:" + pName + "\\.");
@@ -819,7 +849,7 @@ public class CBRInterface extends Flora2CLI {
 	 *            the value to be used instead
 	 * @return true if deleted or not found
 	 */
-	private boolean replaceRegExPatternFromFile(File input, String regex,
+	public static boolean replaceRegExPatternFromFile(File input, String regex,
 												String replace) {
 		String temp = "temp.flr";
 		boolean found = false;

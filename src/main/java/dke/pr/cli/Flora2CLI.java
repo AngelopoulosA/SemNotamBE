@@ -36,18 +36,27 @@ public class Flora2CLI {
 	private final Pattern REGEX_VAR = Pattern
 			.compile("(?<=\\?\\w{1,20}\\s=\\s).*");
 
+
+	protected String flora2Path;
+
 	/**
 	 * Flora2 located at C:/TEMP/dke/flora2/flora2/runflora.bat
 	 *
 	 * @throws IOException
 	 */
+	@Deprecated
 	public Flora2CLI() throws IOException {
+		flora2Path = "C:/TEMP/dke/flora2/flora2/runflora.bat";
 		start();
 	}
 
+
+	public Flora2CLI(boolean start){
+	}
+
+
 	public boolean start() throws IOException {
-		ProcessBuilder builder = new ProcessBuilder(
-				"C:/TEMP/dke/flora2/flora2/runflora.bat"); //TODO: configuration
+		ProcessBuilder builder = new ProcessBuilder(flora2Path);
 
 		builder.redirectErrorStream(true);
 
@@ -195,10 +204,9 @@ public class Flora2CLI {
 	 * @return
 	 * @throws IOException
 	 */
-	public boolean close() throws IOException {
+	public void close() throws IOException {
 		issueCommand("\\halt.");
 		if (getOutput().startsWith("\nEnd XSB"))
-			return true;
-		return false;
+			throw new IOException("Could not close Flora2 shell");
 	}
 }

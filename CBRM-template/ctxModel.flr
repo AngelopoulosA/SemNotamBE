@@ -192,5 +192,6 @@ ContextClass[|defBy{1..*}=>Parameter,ctxRelationship{0..*}=>ContextClass|].
 
 
 
-transCtx(?X,?Y):-?X:AIMCtx[specialises->?Z],?Z[specialises->?Y], \+ (?X =
-?Z), \+ (?Z = ?Y).
+transCtx(?X,?Y):-?X:AIMCtx[specialises->?Z],?Z[specialises->?Y], \+ (?X = ?Z), \+ (?Z = ?Y).
+
+eqCtx(?c1,?c2):- ?c1:AIMCtx, ?c2:AIMCtx, true{forall(?v)^(?c1[?p:Parameter->?v] ~~> ?c2[?p:Parameter->?v])}.

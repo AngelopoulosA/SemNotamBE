@@ -45,7 +45,7 @@ n_aeroEquip:NOTAM[feature->aerodromeILS, status->down].
 Boeing_737:Aircraft[weight->194700].
 Bell_Augusta:Aircraft.
 
-iSpec1:InterestSpec[interest->Boeing_737:Aircraft,flightPhase->onground].
+iSpec1:InterestSpec[interest->Boeing_737,flightPhase->onground].
 iSpec2:InterestSpec[interest->Bell_Augusta,flightPhase->onground].
 iSpec3:InterestSpec[interest->Bell_Augusta,flightPhase->arrival].
 
