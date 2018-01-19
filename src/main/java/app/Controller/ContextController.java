@@ -94,6 +94,28 @@ public class ContextController {
         }
     }
 
+    @GetMapping(path="/strings")
+    public @ResponseBody
+    Set<String> getAllContextList() {
+        try (Flora2Repository fl = new Flora2Repository()) {
+            List<String[]> rawHierarchy = fl.getCtxHierarchy();
+
+            if(rawHierarchy.size() > 0) {
+                Set<String> contextStrings = new HashSet<>();
+
+                for (String[] hierarchy : rawHierarchy) {
+                    for(String contextString : hierarchy) {
+                        contextStrings.add(contextString);
+                    }
+                }
+                return contextStrings;
+            }
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
     private List<Rule> getRules(CBRInterface fl, String id) throws Exception {
         HashMap<String, String> rawRules = fl.getRules(id);
         List<Rule> rules = new LinkedList<>();
