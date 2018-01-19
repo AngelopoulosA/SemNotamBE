@@ -2,6 +2,7 @@ package app.Controller;
 
 import app.Model.Context;
 import app.Model.Parameter;
+import app.Repository.Flora2Repository;
 import dke.pr.cli.CBRInterface;
 import app.Model.ParameterValue;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,7 @@ public class ParameterController {
 	@GetMapping(path="")
 	public @ResponseBody
     List<Parameter> getAllParameters () {
-        try {
-            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-            fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
             return fl.getParameters().stream().map(p -> new Parameter(p)).collect(Collectors.toList());
         } catch (IOException e) {
             return null;
@@ -37,10 +35,7 @@ public class ParameterController {
     @GetMapping(path="/{id}")
     public @ResponseBody
     Parameter getParameterDetails (@PathVariable(value="id") String id) {
-        try {
-            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-            fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
             List<String[]> rawParamValuesHierarchy = fl.getParameterValuesHiearchy(id);
 
             Parameter parameter = new Parameter(id);
@@ -81,10 +76,7 @@ public class ParameterController {
     @GetMapping(path="/withValues")
     public @ResponseBody
     List<Parameter> getParameterWithValues () {
-        try {
-            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-            fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
 
             List<Parameter> parametersWithValues = new LinkedList<>();
             List<String> parameters = fl.getParameters();
@@ -104,10 +96,7 @@ public class ParameterController {
     @PostMapping(path="")
     public @ResponseBody
     Parameter addParameter (@RequestBody Parameter parameter) {
-        try {
-            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-            fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
 
             String detParamValueDef = parameter.getDetParamValue().stream().collect(Collectors.joining("\r\n"));
             fl.addParameter(parameter.getName(), parameter.getParameterValueHierarchy().getName(), detParamValueDef);
@@ -124,10 +113,7 @@ public class ParameterController {
     @DeleteMapping(path="/{id}")
     public @ResponseBody
     boolean deleteParameter (@PathVariable(value="id") String id) {
-        try {
-            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-            fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
 
             boolean result = fl.delParameter(id);
             return result;
@@ -140,10 +126,7 @@ public class ParameterController {
     @PutMapping(path="/{id}")
     public @ResponseBody
     Parameter updateParameterDetParamValue (@PathVariable(value="id") String id, @RequestBody Parameter parameter) {
-        try {
-            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-            fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
 
             String detParamValueDef = parameter.getDetParamValue().stream().collect(Collectors.joining("\r\n"));
             fl.updateDetParamValue(id, detParamValueDef);
@@ -160,10 +143,7 @@ public class ParameterController {
     @PostMapping(path="/{id}")
     public @ResponseBody
     Parameter addParameterValue (@PathVariable(value="id") String parameterId, @RequestBody ParameterValue parameterValue) {
-        try {
-            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-            fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
 
             String[] parents = parameterValue.getParents().stream().map(p -> p.getName()).toArray(String[]::new);
             boolean result = fl.addParameterValue(parameterId, parameterValue.getName(), parents, null);
@@ -179,10 +159,7 @@ public class ParameterController {
     @DeleteMapping(path="/{id}/{valueId}")
     public @ResponseBody
     Parameter deleteParameterValue (@PathVariable(value="id") String parameterId, @PathVariable(value="valueId") String parameterValueId) {
-        try {
-            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-            fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
 
             boolean result = fl.delParameterValue(parameterValueId);
             if(result) {

@@ -2,6 +2,7 @@ package app.Controller;
 
 import app.Model.Notam;
 import app.Model.SemNotam;
+import app.Repository.Flora2Repository;
 import dke.pr.cli.CBRInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,10 +26,7 @@ public class QueryController {
 	@GetMapping(path="")
 	public @ResponseBody
 	List<SemNotam> querySemNotams () {
-		try {
-			CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-					"CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-			fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
 
 			String iSpec = "iSpec1";
 			int i = 0;
@@ -63,10 +61,7 @@ public class QueryController {
 	@GetMapping(path="ispec")
 	public @ResponseBody
 	Map<String, String> getIspecDetails () {
-		try {
-			CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-					"CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-			fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
 
 			String iSpec = "iSpec1";
 			Map<String, String> iSpecDetails = new HashMap<>();
@@ -83,10 +78,7 @@ public class QueryController {
 	@PostMapping(path="ispec")
 	public @ResponseBody
 	Map<String, String> updateIspecDetails (@RequestBody Map<String, String> iSpecDetails) {
-		try {
-			CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-					"CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-			fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
 
 			String iSpec = "iSpec1";
 			fl.delInterestSpec(iSpec);

@@ -4,6 +4,7 @@ import app.Model.ContextDB;
 import app.Model.Rule;
 import app.Model.User;
 import app.Repository.ContextDBRepository;
+import app.Repository.Flora2Repository;
 import app.Repository.UserRepository;
 import dke.pr.cli.CBRInterface;
 import app.Model.Context;
@@ -32,10 +33,7 @@ public class ContextController {
 	@GetMapping(path="")
 	public @ResponseBody
     Context getAllContexts () {
-        try {
-            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-            fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
 
             List<String[]> rawHierarchy = fl.getCtxHierarchy();
 
@@ -75,10 +73,7 @@ public class ContextController {
     @GetMapping(path="/{id}")
     public @ResponseBody
     Context getContextDetails (@PathVariable(value="id") String id) {
-        try {
-            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-            fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
 
             Context context = new Context(id);
             List<String[]> ctxInfo = fl.getCtxInfo(context.getName());
@@ -111,10 +106,7 @@ public class ContextController {
     @PostMapping(path="/{id}/rule")
     public @ResponseBody
     Context addRule (@PathVariable(value="id") String id, @RequestBody Rule rule) {
-        try {
-            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-            fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
 
             boolean result = fl.addRule(id, "@!{"+rule.getId()+"}\r\n"+rule.getBody());
             if(result) {
@@ -130,10 +122,7 @@ public class ContextController {
     @DeleteMapping(path="/{id}/rule/{ruleId}")
     public @ResponseBody
     Context deleteRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId) {
-        try {
-            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-            fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
 
             boolean result = fl.delRule(id, ruleId);
             return getContextDetails(id);
@@ -147,10 +136,7 @@ public class ContextController {
     @PutMapping(path="/{id}/rule/{ruleId}")
     public @ResponseBody
     Context addOrUpdateRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId, @RequestBody Rule rule) {
-        try {
-            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-            fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
 
             deleteRule(id, ruleId);
             return addRule(id, rule);
@@ -164,12 +150,9 @@ public class ContextController {
     @PostMapping(path="")
     public @ResponseBody
     Context addContext (@RequestBody Context context) {
-        try {
-            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
-                    "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-            fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
 
-            String ctxFile = "C:/TEMP/dke/SemNotamBE/CBRM/Contexts/"+context.getName()+".flr"; //TODO: Path
+            String ctxFile = fl.getCtxFileName(context.getName());
             String paramValues = context.getParameterValues().entrySet().stream().map(e -> e.getKey()+"->"+e.getValue()).collect(Collectors.joining(","));
             String ctxDefinition = context.getName()+":AIMCtx["+paramValues+",file->'"+ctxFile+"'].";
             boolean result = fl.addCtx(ctxDefinition, ctxFile);
