@@ -1,4 +1,6 @@
-package app.Model;
+package app.Model.Flora2;
+
+import app.Model.Flora2.Notam;
 
 import java.util.List;
 

@@ -1,5 +1,6 @@
-package app.Model;
+package app.Model.Flora2;
 
+import app.Model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.*;

@@ -1,13 +1,13 @@
 package app.Controller;
 
 import app.Model.ContextDB;
-import app.Model.Rule;
+import app.Model.Flora2.Rule;
 import app.Model.User;
 import app.Repository.ContextDBRepository;
 import app.Repository.Flora2Repository;
 import app.Repository.UserRepository;
 import dke.pr.cli.CBRInterface;
-import app.Model.Context;
+import app.Model.Flora2.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -24,15 +24,25 @@ public class ContextController {
     private final ContextDBRepository contextDBRepository;
     private final UserRepository userRepository;
 
-	@Autowired
-	public ContextController(ContextDBRepository contextDBRepository, UserRepository userRepository) {
+    @Autowired
+    public ContextController(ContextDBRepository contextDBRepository, UserRepository userRepository) {
         this.contextDBRepository = contextDBRepository;
         this.userRepository = userRepository;
-	};
+    };
 
-	@GetMapping(path="")
-	public @ResponseBody
-    Context getAllContexts () {
+    @GetMapping(path="")
+    public @ResponseBody
+    List<String> getAllContextsFlat () {
+        try (Flora2Repository fl = new Flora2Repository()) {
+            return fl.getCtxs();
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    @GetMapping(path="/hierarchy")
+    public @ResponseBody
+    Context getContextHierarchy () {
         try (Flora2Repository fl = new Flora2Repository()) {
 
             List<String[]> rawHierarchy = fl.getCtxHierarchy();
@@ -68,7 +78,7 @@ public class ContextController {
         } catch (IOException e) {
             return null;
         }
-	}
+    }
 
     @GetMapping(path="/{id}")
     public @ResponseBody
@@ -90,28 +100,6 @@ public class ContextController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
-        }
-    }
-
-    @GetMapping(path="/strings")
-    public @ResponseBody
-    Set<String> getAllContextList() {
-        try (Flora2Repository fl = new Flora2Repository()) {
-            List<String[]> rawHierarchy = fl.getCtxHierarchy();
-
-            if(rawHierarchy.size() > 0) {
-                Set<String> contextStrings = new HashSet<>();
-
-                for (String[] hierarchy : rawHierarchy) {
-                    for(String contextString : hierarchy) {
-                        contextStrings.add(contextString);
-                    }
-                }
-                return contextStrings;
-            }
-            return null;
-        } catch (IOException e) {
             return null;
         }
     }
@@ -180,7 +168,7 @@ public class ContextController {
             boolean result = fl.addCtx(ctxDefinition, ctxFile);
             if(result) {
                 Thread.sleep(1000);
-                return getAllContexts();
+                return getContextHierarchy();
             }
             return null;
         } catch (Exception e) {
@@ -192,9 +180,7 @@ public class ContextController {
     @DeleteMapping(path="/{id}")
     public @ResponseBody
     boolean deleteContext (@PathVariable(value="id") String id) {
-        try {
-            CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr", "CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
-            fl.setDebug(false);
+        try (Flora2Repository fl = new Flora2Repository()) {
 
             boolean result = fl.delCtx(id, true);
             if(result) {

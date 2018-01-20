@@ -1,12 +1,20 @@
 package app.Model;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import java.util.Date;
 
 @Entity
-public class AtomicOperation {
+public abstract class AtomicOperation extends Operation  {
 
-    @Id
-    private long id;
-    private String type;
+    public AtomicOperation(long parentId, Date executedAt, boolean isExecuted, String text, Long executedBy, String affectedElement) {
+        super(parentId, executedAt, isExecuted, text, executedBy, affectedElement);
+    }
+
+    public AtomicOperation() {
+    }
+
+    @Override
+    public String getAbstractType() {
+        return "AtomicOperation";
+    }
 }

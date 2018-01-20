@@ -1,4 +1,4 @@
-package app.Model;
+package app.Model.Flora2;
 
 public class Rule {
     private String id;

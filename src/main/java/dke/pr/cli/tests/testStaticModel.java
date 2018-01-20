@@ -6,7 +6,7 @@ import dke.pr.cli.CBRInterface;
 
 public class testStaticModel {
 	public static void main(String[] args) throws Exception {
-		CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
+		/*CBRInterface fl = new CBRInterface("CBRM/ctxModelAIM.flr",
 				"CBRM/bc.flr", "AIMCtx", "SemNOTAMCase");
 
 		fl.setDebug(false);
@@ -73,6 +73,6 @@ public class testStaticModel {
 			System.out.print(Arrays.toString(str));
 		}
 
-		fl.close();
+		fl.close();*/
 	}
 }

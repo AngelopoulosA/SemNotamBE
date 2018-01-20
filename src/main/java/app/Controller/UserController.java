@@ -53,6 +53,12 @@ public class UserController {
 		return userRepository.findAll();
 	}
 
+	@GetMapping(path="/ruleDevelopers")
+	public @ResponseBody Iterable<User> getRuleDevelopers() {
+		Role ruleDeveloper = roleRepository.findOne(1L);
+		return userRepository.findAllByRole(ruleDeveloper);
+	}
+
 	@DeleteMapping(path="/{id}")
 	public @ResponseBody String deleteUserById(@PathVariable(value="id") long id) {
 		User user = new User();
