@@ -1,4 +1,4 @@
-package app.Model;
+package app.Model.Flora2;
 
 import java.util.LinkedList;
 import java.util.List;

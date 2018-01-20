@@ -1,4 +1,4 @@
-package app.Model;
+package app.Model.Flora2;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

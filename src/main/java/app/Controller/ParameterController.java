@@ -1,10 +1,8 @@
 package app.Controller;
 
-import app.Model.Context;
-import app.Model.Parameter;
+import app.Model.Flora2.Parameter;
 import app.Repository.Flora2Repository;
-import dke.pr.cli.CBRInterface;
-import app.Model.ParameterValue;
+import app.Model.Flora2.ParameterValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

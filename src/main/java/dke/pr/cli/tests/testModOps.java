@@ -7,7 +7,7 @@ import dke.pr.cli.CBRInterface;
 public class testModOps {
 
 	public static void main(String[] args) throws Exception {
-		CBRInterface fl = new CBRInterface(
+		/*CBRInterface fl = new CBRInterface(
 				"/home/fburgstaller/flora2/CBRM/ctxModelAIM.flr",
 				"/home/fburgstaller/flora2/CBRM/bc.flr", "AIMCtx",
 				"SemNOTAMCase");
@@ -181,6 +181,6 @@ public class testModOps {
 		// for (String[] strings : fl
 		// .getCtx("test")) {
 		// System.out.print(Arrays.toString(strings) + ", ");
-		// }
+		// }*/
 	}
 }

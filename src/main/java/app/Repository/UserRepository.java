@@ -1,5 +1,6 @@
 package app.Repository;
 
+import app.Model.Role;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -15,5 +16,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
     void deleteUserBy(User user);
 
     User findFirstByUsernameAndPassword(String name, String password);
+    Iterable<User> findAllByRole(Role role);
 
 }

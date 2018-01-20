@@ -1,6 +1,8 @@
 package app.Model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -21,10 +23,57 @@ public abstract class Operation {
     private String text;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", updatable = false, insertable = false)
     private User executedBy;
 
+    @Column(name = "user_id", updatable = true, insertable = true)
+    private Long userId;
+
     private String affectedElement;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "parent_id", updatable = false, insertable = false)
+    private Operation parent;
+
+    @Column(name = "parent_id", updatable = true, insertable = true)
+    private Long parentId;
+
+    public Operation getParent() {
+        return parent;
+    }
+
+    public void setParent(Operation parent) {
+        this.parent = parent;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
+    public Operation() {
+    }
+
+    public Operation(Long parentId, Date executedAt, boolean isExecuted, String text, Long userId, String affectedElement) {
+        this.parentId = parentId;
+        this.executedAt = executedAt;
+        this.isExecuted = isExecuted;
+        this.text = text;
+        this.userId = userId;
+        this.affectedElement = affectedElement;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public Integer getId() {
         return id;
@@ -73,4 +122,11 @@ public abstract class Operation {
     public void setAffectedElement(String affectedElement) {
         this.affectedElement = affectedElement;
     }
+
+    public abstract String getAbstractType();
+    public String getConcreteType() {
+        return this.getClass().getSimpleName();
+    }
+    public abstract String getVerb();
+    public abstract String getAffectedElementType();
 }

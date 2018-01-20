@@ -1,9 +1,8 @@
 package app.Controller;
 
-import app.Model.Notam;
-import app.Model.SemNotam;
+import app.Model.Flora2.Notam;
+import app.Model.Flora2.SemNotam;
 import app.Repository.Flora2Repository;
-import dke.pr.cli.CBRInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
