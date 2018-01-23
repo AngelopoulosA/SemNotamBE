@@ -2,7 +2,10 @@ package app.Controller;
 
 import app.Model.ContextDB;
 import app.Model.Flora2.Rule;
+import app.Model.Operations.DeleteContext;
+import app.Model.Operations.DeleteRule;
 import app.Model.User;
+import app.Repository.ComposedOperationLogic;
 import app.Repository.ContextDBRepository;
 import app.Repository.Flora2Repository;
 import app.Repository.UserRepository;
@@ -23,12 +26,15 @@ public class ContextController {
 
     private final ContextDBRepository contextDBRepository;
     private final UserRepository userRepository;
+    private final ComposedOperationLogic composedOperationLogic;
+
 
     @Autowired
-    public ContextController(ContextDBRepository contextDBRepository, UserRepository userRepository) {
+    public ContextController(ContextDBRepository contextDBRepository, UserRepository userRepository, ComposedOperationLogic composedOperationLogic) {
         this.contextDBRepository = contextDBRepository;
         this.userRepository = userRepository;
-    };
+        this.composedOperationLogic = composedOperationLogic;
+    }
 
     @GetMapping(path="")
     public @ResponseBody
@@ -95,22 +101,13 @@ public class ContextController {
             if(contextDB != null) {
                 context.setRuleDevelopers(contextDB.getRuleDevelopers());
             }
-            context.setRules(getRules(fl, id));
+            context.setRules(fl.getRuleObjects(id));
             return context;
 
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
-    }
-
-    private List<Rule> getRules(CBRInterface fl, String id) throws Exception {
-        HashMap<String, String> rawRules = fl.getRules(id);
-        List<Rule> rules = new LinkedList<>();
-        for (Map.Entry<String, String> rule : rawRules.entrySet()) {
-            rules.add(new Rule(rule.getKey(), rule.getValue().replace("@!{"+rule.getKey()+"}\r\n", "")));
-        }
-        return rules;
     }
 
     @PostMapping(path="/{id}/rule")
@@ -131,10 +128,12 @@ public class ContextController {
 
     @DeleteMapping(path="/{id}/rule/{ruleId}")
     public @ResponseBody
-    Context deleteRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId) {
+    Context deleteRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId, @RequestHeader("User") Long user) {
         try (Flora2Repository fl = new Flora2Repository()) {
-
-            boolean result = fl.delRule(id, ruleId);
+            if (composedOperationLogic.checkOperation(fl, new DeleteRule(fl.getContext(contextDBRepository, id), ruleId), user)) {
+                boolean result = fl.delRule(id, ruleId);
+                return getContextDetails(id);
+            }
             return getContextDetails(id);
 
         } catch (Exception e) {
@@ -145,10 +144,10 @@ public class ContextController {
 
     @PutMapping(path="/{id}/rule/{ruleId}")
     public @ResponseBody
-    Context addOrUpdateRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId, @RequestBody Rule rule) {
+    Context addOrUpdateRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId, @RequestBody Rule rule, @RequestHeader("User") Long user) {
         try (Flora2Repository fl = new Flora2Repository()) {
 
-            deleteRule(id, ruleId);
+            deleteRule(id, ruleId, user);
             return addRule(id, rule);
 
         } catch (Exception e) {
@@ -179,15 +178,18 @@ public class ContextController {
 
     @DeleteMapping(path="/{id}")
     public @ResponseBody
-    boolean deleteContext (@PathVariable(value="id") String id) {
+    boolean deleteContext (@PathVariable(value="id") String id, @RequestHeader("User") Long user) {
         try (Flora2Repository fl = new Flora2Repository()) {
-
-            boolean result = fl.delCtx(id, true);
-            if(result) {
-                Thread.sleep(1000);
-                fl.restart();
+            if (composedOperationLogic.checkOperation(fl, new DeleteContext(fl.getContext(contextDBRepository, id)), user)) {
+                boolean result = fl.delCtx(id, true);
+                if(result) {
+                    contextDBRepository.delete(id);
+                    Thread.sleep(1000);
+                    fl.restart();
+                }
+                return result;
             }
-            return result;
+            return false;
         } catch (Exception e) {
             e.printStackTrace();
             return false;

@@ -74,4 +74,14 @@ public class Context {
     public void setRuleDevelopers(List<User> ruleDevelopers) {
         this.ruleDevelopers = ruleDevelopers;
     }
+
+    @JsonIgnore
+    public List<Context> getChildrenFlat() {
+        List<Context> childrenFlat = new LinkedList<>();
+        for (Context c : children) {
+            childrenFlat.addAll(c.getChildrenFlat());
+            childrenFlat.add(c);
+        }
+        return childrenFlat;
+    }
 }

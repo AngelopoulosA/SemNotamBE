@@ -80,14 +80,20 @@ public class Startup implements ApplicationListener<ApplicationReadyEvent> {
         User rd1 = userRepository.findOne(1L);
         User rd2 = userRepository.findOne(2L);
 
+
+        Message m1 = new Message("New Context aircraft_allFlightPhases_treeObstruction added", "New Context aircraft_allFlightPhases_treeObstruction added", rd1);
+        messageRepository.save(m1);
+        Message m2 = new Message("Context aircraft_allFlightPhases_treeObstruction added below aircraft_allFlightPhases_obstruction", "Context aircraft_allFlightPhases_treeObstruction added below aircraft_allFlightPhases_obstruction", rd2);
+        messageRepository.save(m2);
+
         ComposedOperation co1 = new SplitContext(null, new Date(), false, "", 3L, "aircraft_allFlightPhases_obstruction");
-        co1.setId(1);
+        co1.setId(1L);
         AtomicOperation ao1 = new AddParameterValue(1L, new Date(), true, "", 3L, "treeObstruction");
         AtomicOperation ao2 = new AddParameterValue(1L, new Date(), true, "", 3L, "nonTreeObstruction");
         ComposedOperation co2 = new AddContext(1L, new Date(), false, "", 3L, "aircraft_allFlightPhases_treeObstruction");
-        co2.setId(4);
-        SendMessage sm1 = new SendMessage(4L, new Date(), true, "", 3L, "1");
-        SendMessage sm2 = new SendMessage(4L, new Date(), true, "", 3L, "2");
+        co2.setId(4L);
+        SendMessage sm1 = new SendMessage(4L, "", 3L, m1);
+        SendMessage sm2 = new SendMessage(4L, "", 3L, m2);
 
 
         operationRepository.save(co1);
@@ -98,10 +104,6 @@ public class Startup implements ApplicationListener<ApplicationReadyEvent> {
         operationRepository.save(sm2);
 
 
-        Message m1 = new Message("New Context aircraft_allFlightPhases_treeObstruction added", "New Context aircraft_allFlightPhases_treeObstruction added", rd1);
-        messageRepository.save(m1);
-        Message m2 = new Message("Context aircraft_allFlightPhases_treeObstruction added below aircraft_allFlightPhases_obstruction", "Context aircraft_allFlightPhases_treeObstruction added below aircraft_allFlightPhases_obstruction", rd2);
-        messageRepository.save(m2);
     }
 
 

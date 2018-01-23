@@ -1,11 +1,17 @@
 package app.Model;
 
 import app.Model.Operation;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import java.util.Date;
 
 @Entity
 public class SendMessage extends Operation {
+    @OneToOne()
+    private Message message;
+
     @Override
     public String getAbstractType() {
         return "SendMessage";
@@ -24,7 +30,16 @@ public class SendMessage extends Operation {
     public SendMessage() {
     }
 
-    public SendMessage(Long parentId, Date executedAt, boolean isExecuted, String text, Long userId, String affectedElement) {
-        super(parentId, executedAt, isExecuted, text, userId, affectedElement);
+    public SendMessage(Long parentId, String text, Long userId, Message message) {
+        super(parentId, message.getTime(), false, text, userId, message.getId().toString());
+        this.message = message;
+    }
+
+    public Message getMessage() {
+        return message;
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
     }
 }

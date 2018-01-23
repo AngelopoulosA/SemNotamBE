@@ -14,7 +14,7 @@ public abstract class Operation {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private Integer id;
+    private Long id;
 
     private Date executedAt;
 
@@ -34,16 +34,16 @@ public abstract class Operation {
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "parent_id", updatable = false, insertable = false)
-    private Operation parent;
+    private ComposedOperation parent;
 
     @Column(name = "parent_id", updatable = true, insertable = true)
     private Long parentId;
 
-    public Operation getParent() {
+    public ComposedOperation getParent() {
         return parent;
     }
 
-    public void setParent(Operation parent) {
+    public void setParent(ComposedOperation parent) {
         this.parent = parent;
     }
 
@@ -75,11 +75,11 @@ public abstract class Operation {
         this.userId = userId;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -1,8 +1,12 @@
 package app.Controller;
 
+import app.Model.ComposedOperation;
 import app.Model.Message;
+import app.Model.SendMessage;
 import app.Model.User;
+import app.Repository.ComposedOperationLogic;
 import app.Repository.MessageRepository;
+import app.Repository.OperationRepository;
 import app.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,11 +28,13 @@ public class MessageController {
 
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
+    private final ComposedOperationLogic composedOperationLogic;
 
     @Autowired
-    public MessageController(MessageRepository messageRepository, UserRepository userRepository){
+    public MessageController(MessageRepository messageRepository, UserRepository userRepository, ComposedOperationLogic composedOperationLogic) {
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
+        this.composedOperationLogic = composedOperationLogic;
     }
 
     @PostMapping(path="")
@@ -61,6 +67,25 @@ public class MessageController {
         messageRepository.save(newMessage);
 
         return "ok";
+    }
+
+    @PutMapping(path="/{id}")
+    public @ResponseBody Message updateMessage (@PathVariable(value="id") long id, @RequestBody Message updatedMessage, @RequestHeader("User") Long user){
+        Message message = messageRepository.findOne(id);
+
+        if(message != null){
+            message.setRead(updatedMessage.isRead());
+            if(!message.isAcknowledged() && updatedMessage.isAcknowledged()) {
+                boolean result = composedOperationLogic.acknowledgeMessage(message.getSendMessageOperation(),user);
+                if (result) {
+                    message.setAcknowledged(true);
+                }
+            }
+            messageRepository.save(message);
+            return message;
+        } else {
+            return null;
+        }
     }
 
     @GetMapping(path = "")

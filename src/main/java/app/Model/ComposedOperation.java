@@ -1,9 +1,11 @@
 package app.Model;
 
 import app.Model.Operations.Step;
+import app.Repository.ContextDBRepository;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +39,11 @@ public abstract class ComposedOperation extends Operation {
 
     public abstract Step[] getAllowedOperations();
 
+    public boolean checkIfAllowed (Operation operation) {
+        Step[] allowedOperations = getAllowedOperations();
+        return Arrays.asList(allowedOperations).stream().filter(s -> s.getOperationClass() == operation.getClass()).findFirst().isPresent();
+    }
+
     public ComposedOperation findCurrentOperation() {
         for (Operation o: operations) {
             if(o.isExecuted() == false) {
@@ -47,5 +54,13 @@ public abstract class ComposedOperation extends Operation {
         }
 
         return this;
+    }
+
+    public List<Message> generateMessages() {
+        return new LinkedList<>();
+    }
+
+    public boolean onExecuted(ContextDBRepository contextDBRepository) {
+        return true;
     }
 }
