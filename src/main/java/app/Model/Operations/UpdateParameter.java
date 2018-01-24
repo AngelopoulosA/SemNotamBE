@@ -1,6 +1,7 @@
 package app.Model.Operations;
 
 import app.Model.ComposedOperation;
+import app.Model.Flora2.Parameter;
 
 import javax.persistence.Entity;
 import java.util.Date;
@@ -13,6 +14,10 @@ public class UpdateParameter extends ComposedOperation {
     }
 
     public UpdateParameter() {
+    }
+
+    public UpdateParameter(Parameter parameter) {
+        this.setAffectedElement(parameter.getName());
     }
 
     @Override

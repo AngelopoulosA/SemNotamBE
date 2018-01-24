@@ -5,6 +5,7 @@ import app.Model.Flora2.Context;
 import app.Model.Flora2.Rule;
 import app.Model.InvalidOperationException;
 import app.Model.Message;
+import app.Repository.ContextDBRepository;
 import app.Repository.Flora2Repository;
 
 import javax.persistence.Entity;
@@ -17,17 +18,16 @@ public class DeleteRule extends ComposedOperation {
 
     @Transient
     private Context context;
-    @Transient
-    private String ruleId;
+    private String contextId;
 
     public DeleteRule() {
     }
 
     public DeleteRule(Context context, String ruleId) {
         super();
-        this.setAffectedElement(context.getName());
+        this.setAffectedElement(ruleId);
         this.context = context;
-        this.ruleId = ruleId;
+        this.contextId = context.getName();
     }
 
     public Step[] getAllowedOperations() {
@@ -49,6 +49,7 @@ public class DeleteRule extends ComposedOperation {
 
     @Override
     public List<Message> generateMessages() {
+        String ruleId = getAffectedElement();
         List<Message> messages = new LinkedList<>();
         List<Context> childContexts = context.getChildrenFlat();
         Rule rule = context.getRules().stream().filter(r -> r.getId().equals(ruleId)).findFirst().orElseGet(null);
@@ -69,6 +70,18 @@ public class DeleteRule extends ComposedOperation {
             messages.add(m);
         }
         return messages;
+    }
+
+    @Override
+    public boolean onExecuted(ContextDBRepository contextDBRepository) {
+        String id = getAffectedElement();
+        try (Flora2Repository fl = new Flora2Repository()) {
+            boolean result = fl.delRule(contextId, id);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

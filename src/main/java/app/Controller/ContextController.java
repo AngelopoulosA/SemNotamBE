@@ -2,14 +2,12 @@ package app.Controller;
 
 import app.Model.ContextDB;
 import app.Model.Flora2.Rule;
-import app.Model.Operations.DeleteContext;
-import app.Model.Operations.DeleteRule;
+import app.Model.Operations.*;
 import app.Model.User;
 import app.Repository.ComposedOperationLogic;
 import app.Repository.ContextDBRepository;
 import app.Repository.Flora2Repository;
 import app.Repository.UserRepository;
-import dke.pr.cli.CBRInterface;
 import app.Model.Flora2.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -112,9 +110,9 @@ public class ContextController {
 
     @PostMapping(path="/{id}/rule")
     public @ResponseBody
-    Context addRule (@PathVariable(value="id") String id, @RequestBody Rule rule) {
+    Context addRule (@PathVariable(value="id") String id, @RequestBody Rule rule, @RequestHeader("User") Long user) {
         try (Flora2Repository fl = new Flora2Repository()) {
-
+            composedOperationLogic.checkAndStartOperation(fl, new AddRule(fl.getContext(contextDBRepository, id), rule), user);
             boolean result = fl.addRule(id, "@!{"+rule.getId()+"}\r\n"+rule.getBody());
             if(result) {
                 return getContextDetails(id);
@@ -130,7 +128,7 @@ public class ContextController {
     public @ResponseBody
     Context deleteRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId, @RequestHeader("User") Long user) {
         try (Flora2Repository fl = new Flora2Repository()) {
-            if (composedOperationLogic.checkOperation(fl, new DeleteRule(fl.getContext(contextDBRepository, id), ruleId), user)) {
+            if (composedOperationLogic.checkAndStartOperation(fl, new DeleteRule(fl.getContext(contextDBRepository, id), ruleId), user)) {
                 boolean result = fl.delRule(id, ruleId);
                 return getContextDetails(id);
             }
@@ -144,11 +142,18 @@ public class ContextController {
 
     @PutMapping(path="/{id}/rule/{ruleId}")
     public @ResponseBody
-    Context addOrUpdateRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId, @RequestBody Rule rule, @RequestHeader("User") Long user) {
+    Context updateRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId, @RequestBody Rule rule, @RequestHeader("User") Long user) {
         try (Flora2Repository fl = new Flora2Repository()) {
-
-            deleteRule(id, ruleId, user);
-            return addRule(id, rule);
+            if (composedOperationLogic.checkAndStartOperation(fl, new EditRule(fl.getContext(contextDBRepository, id), rule), user)) {
+                boolean result = fl.delRule(id, ruleId);
+                if (result) {
+                    result = fl.addRule(id, "@!{"+rule.getId()+"}\r\n"+rule.getBody());
+                    if (result) {
+                        return getContextDetails(id);
+                    }
+                }
+            }
+            return getContextDetails(id); //TODO Exception
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -158,17 +163,25 @@ public class ContextController {
 
     @PostMapping(path="")
     public @ResponseBody
-    Context addContext (@RequestBody Context context) {
+    Context addContext (@RequestBody Context context, @RequestHeader("User") Long user) {
         try (Flora2Repository fl = new Flora2Repository()) {
-
             String ctxFile = fl.getCtxFileName(context.getName());
-            String paramValues = context.getParameterValues().entrySet().stream().map(e -> e.getKey()+"->"+e.getValue()).collect(Collectors.joining(","));
-            String ctxDefinition = context.getName()+":AIMCtx["+paramValues+",file->'"+ctxFile+"'].";
+            String paramValues = context.getParameterValues().entrySet().stream().map(e -> e.getKey() + "->" + e.getValue()).collect(Collectors.joining(","));
+            String ctxDefinition = context.getName() + ":AIMCtx[" + paramValues + ",file->'" + ctxFile + "'].";
             boolean result = fl.addCtx(ctxDefinition, ctxFile);
-            if(result) {
+
+            Thread.sleep(1000);
+            fl.restart();
+
+            if (result) {
+                ContextDB contextDB = new ContextDB(context.getName(), context.getRuleDevelopers());
+                contextDBRepository.save(contextDB);
                 Thread.sleep(1000);
-                return getContextHierarchy();
+                if (composedOperationLogic.checkAndStartOperation(fl, new AddContext(fl.getContext(contextDBRepository, context.getName())), user)) {
+                    return getContextHierarchy();
+                }
             }
+
             return null;
         } catch (Exception e) {
             e.printStackTrace();
@@ -180,7 +193,7 @@ public class ContextController {
     public @ResponseBody
     boolean deleteContext (@PathVariable(value="id") String id, @RequestHeader("User") Long user) {
         try (Flora2Repository fl = new Flora2Repository()) {
-            if (composedOperationLogic.checkOperation(fl, new DeleteContext(fl.getContext(contextDBRepository, id)), user)) {
+            if (composedOperationLogic.checkAndStartOperation(fl, new DeleteContext(fl.getContext(contextDBRepository, id)), user)) {
                 boolean result = fl.delCtx(id, true);
                 if(result) {
                     contextDBRepository.delete(id);
@@ -226,5 +239,49 @@ public class ContextController {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @PostMapping(path="/{id}/merge/{to}")
+    public @ResponseBody
+    boolean mergeContext (@PathVariable(value="id") String id, @PathVariable(value="to") String toId, @RequestHeader("User") Long user) {
+
+        return false;
+    }
+
+    @PostMapping(path="/{id}/split")
+    public @ResponseBody
+    boolean splitContext (@PathVariable(value="id") String id, @RequestHeader("User") Long user) {
+        try (Flora2Repository fl = new Flora2Repository()) {
+            if (composedOperationLogic.checkAndStartOperation(fl, new SplitContext(fl.getContext(contextDBRepository, id)), user)) {
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
+    @PostMapping(path="/{id}/rule/{ruleId}/contextualize/{to}")
+    public @ResponseBody
+    boolean contextualizeRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId, @PathVariable(value="to") String toId, @RequestBody Rule rule, @RequestHeader("User") Long user) {
+        try (Flora2Repository fl = new Flora2Repository()) {
+            if (composedOperationLogic.checkAndStartOperation(fl, new ContextualizeRule(rule, fl.getContext(contextDBRepository, id), fl.getContext(contextDBRepository, toId)), user)) {
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
+    @PostMapping(path="/{id}/rule/{ruleId}/decontextualize/{to}")
+    public @ResponseBody
+    boolean decontextualizeRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId, @PathVariable(value="to") String toId, @RequestHeader("User") Long user) {
+        return false;
+
     }
 }

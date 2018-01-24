@@ -28,7 +28,7 @@ public class ComposedOperationLogic {
         this.messageRepository = messageRepository;
     }
 
-    public boolean checkOperation(Flora2Repository fl, ComposedOperation operation, Long userId) throws Exception {
+    public boolean checkAndStartOperation(Flora2Repository fl, ComposedOperation operation, Long userId) throws Exception {
         User user = userRepository.findOne(userId);
         if(user == null) {
             throw new InvalidUserException();

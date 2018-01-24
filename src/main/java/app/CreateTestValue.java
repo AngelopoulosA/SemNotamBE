@@ -53,7 +53,7 @@ public class CreateTestValue {
         System.out.println("\nTesting listAllMessagesFromUser API-----------\n");
 
         RestTemplate restTemplate = new RestTemplate();
-        List<LinkedHashMap<String, Object>> usersMap = restTemplate.getForObject(REST_SERVICE_URI+"/messages/fromUser/2", List.class);
+        List<LinkedHashMap<String, Object>> usersMap = restTemplate.getForObject(REST_SERVICE_URI+"/messages/fromUser", List.class);
 
         if(usersMap!=null){
             for(LinkedHashMap<String, Object> map : usersMap){

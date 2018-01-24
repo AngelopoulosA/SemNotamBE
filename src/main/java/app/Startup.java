@@ -52,7 +52,7 @@ public class Startup implements ApplicationListener<ApplicationReadyEvent> {
      */
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
-        if (ddlStrategy.equals("create")) {
+        if (ddlStrategy.equals("create") || ddlStrategy.equals("create-drop")) {
             try {
                 File cbrm = new File("CBRM");
                 File cbrmCurrent = new File("CBRM/current");
@@ -77,31 +77,31 @@ public class Startup implements ApplicationListener<ApplicationReadyEvent> {
     }
 
     private void initData() {
-        User rd1 = userRepository.findOne(1L);
-        User rd2 = userRepository.findOne(2L);
-
-
-        Message m1 = new Message("New Context aircraft_allFlightPhases_treeObstruction added", "New Context aircraft_allFlightPhases_treeObstruction added", rd1);
-        messageRepository.save(m1);
-        Message m2 = new Message("Context aircraft_allFlightPhases_treeObstruction added below aircraft_allFlightPhases_obstruction", "Context aircraft_allFlightPhases_treeObstruction added below aircraft_allFlightPhases_obstruction", rd2);
-        messageRepository.save(m2);
-
-        ComposedOperation co1 = new SplitContext(null, new Date(), false, "", 3L, "aircraft_allFlightPhases_obstruction");
-        co1.setId(1L);
-        AtomicOperation ao1 = new AddParameterValue(1L, new Date(), true, "", 3L, "treeObstruction");
-        AtomicOperation ao2 = new AddParameterValue(1L, new Date(), true, "", 3L, "nonTreeObstruction");
-        ComposedOperation co2 = new AddContext(1L, new Date(), false, "", 3L, "aircraft_allFlightPhases_treeObstruction");
-        co2.setId(4L);
-        SendMessage sm1 = new SendMessage(4L, "", 3L, m1);
-        SendMessage sm2 = new SendMessage(4L, "", 3L, m2);
-
-
-        operationRepository.save(co1);
-        operationRepository.save(ao1);
-        operationRepository.save(ao2);
-        operationRepository.save(co2);
-        operationRepository.save(sm1);
-        operationRepository.save(sm2);
+//        User rd1 = userRepository.findOne(1L);
+//        User rd2 = userRepository.findOne(2L);
+//
+//
+//        Message m1 = new Message("New Context aircraft_allFlightPhases_treeObstruction added", "New Context aircraft_allFlightPhases_treeObstruction added", rd1);
+//        messageRepository.save(m1);
+//        Message m2 = new Message("Context aircraft_allFlightPhases_treeObstruction added below aircraft_allFlightPhases_obstruction", "Context aircraft_allFlightPhases_treeObstruction added below aircraft_allFlightPhases_obstruction", rd2);
+//        messageRepository.save(m2);
+//
+//        ComposedOperation co1 = new SplitContext(null, new Date(), false, "", 3L, "aircraft_allFlightPhases_obstruction");
+//        co1.setId(1L);
+//        ComposedOperation ao1 = new AddParameterValue(1L, new Date(), true, "", 3L, "treeObstruction");
+//        ComposedOperation ao2 = new AddParameterValue(1L, new Date(), true, "", 3L, "nonTreeObstruction");
+//        ComposedOperation co2 = new AddContext(1L, new Date(), false, "", 3L, "aircraft_allFlightPhases_treeObstruction");
+//        co2.setId(4L);
+//        SendMessage sm1 = new SendMessage(4L, "", 3L, m1);
+//        SendMessage sm2 = new SendMessage(4L, "", 3L, m2);
+//
+//
+//        operationRepository.save(co1);
+//        operationRepository.save(ao1);
+//        operationRepository.save(ao2);
+//        operationRepository.save(co2);
+//        operationRepository.save(sm1);
+//        operationRepository.save(sm2);
 
 
     }

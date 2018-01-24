@@ -21,7 +21,7 @@ public class Flora2Repository extends CBRInterface implements AutoCloseable  {
     }
 
     public String getCtxFileName(String context) {
-        File cbrmCurrent = new File("CBRM/current");
+        File cbrmCurrent = new File("CBRM/current/Contexts");
         String path = cbrmCurrent.getAbsolutePath().replace('\\', '/');
         return path+"/"+context+".flr";
     }
@@ -50,12 +50,22 @@ public class Flora2Repository extends CBRInterface implements AutoCloseable  {
                 child.getParents().add(parent);
             }
 
+            for (Context c : contexts.values()) {
+                ContextDB contextDB = contextDBRepository.findOne(c.getName());
+                if(contextDB != null) {
+                    c.setRuleDevelopers(contextDB.getRuleDevelopers());
+                }
+            }
             context = contexts.values().stream().filter(pv -> pv.getName().equals(id)).findFirst().orElseGet(null);
 
         } else { // No Hierarchy - just one Context
             List<String> ctxs = getCtxs();
             if(ctxs.contains(id)) {
                 context = new Context(id);
+            }
+            ContextDB contextDB = contextDBRepository.findOne(id);
+            if(contextDB != null) {
+                context.setRuleDevelopers(contextDB.getRuleDevelopers());
             }
         }
 
@@ -68,10 +78,7 @@ public class Flora2Repository extends CBRInterface implements AutoCloseable  {
             context.getParameterValues().put(parameterValue[0], parameterValue[1]);
         }
 
-        ContextDB contextDB = contextDBRepository.findOne(id);
-        if(contextDB != null) {
-            context.setRuleDevelopers(contextDB.getRuleDevelopers());
-        }
+
         context.setRules(getRuleObjects(id));
         return context;
     }
