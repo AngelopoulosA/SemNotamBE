@@ -18,7 +18,6 @@ public class CreateTestValue {
     public CreateTestValue(){
         if (getRole(1)== null){
             this.isCreated = true;
-            createRoles();
             createUsers();
             createMessages();
         } else {
@@ -112,30 +111,6 @@ public class CreateTestValue {
         RestTemplate restTemplate = new RestTemplate();
         Message message = restTemplate.getForObject(REST_SERVICE_URI+"/messages/"+messageId, Message.class);
         return message;
-    }
-
-    /* POST */
-    public void createRoles() {
-        Role role;
-        String result;
-
-        System.out.println("Testing create Role API----------");
-        RestTemplate restTemplate = new RestTemplate();
-        role = new Role("Rule Developer", "Rollenbeschreibung Developer");
-        result = restTemplate.postForObject(REST_SERVICE_URI+"/roles/", role, String.class) ;
-        System.out.println("\n Role : "+result + "\n");
-
-        role = new Role("Repository Administrator", "Rollenbeschreibung Repository Administrator");
-        result = restTemplate.postForObject(REST_SERVICE_URI+"/roles/", role, String.class) ;
-        System.out.println("\n Role : "+result + "\n");
-
-        role = new Role("Domain Expert", "Rollenbeschreibung Domain Expert");
-        result = restTemplate.postForObject(REST_SERVICE_URI+"/roles/", role, String.class) ;
-        System.out.println("\n Role : "+result + "\n");
-
-        role = new Role("User", "Rollenbeschreibung User");
-        result = restTemplate.postForObject(REST_SERVICE_URI+"/roles/", role, String.class) ;
-        System.out.println("\n Role : "+result + "\n");
     }
 
     /* GET */

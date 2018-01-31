@@ -39,7 +39,7 @@ public class ComposedOperationLogic {
         ComposedOperation pending = getPendingOperation();
         if (pending == null) {
             fl.startTransaction();
-        } else if (pending.checkIfAllowed(operation)) {
+        } else if (pending.checkIfAllowed(operation, user)) {
             operation.setParent(pending);
             operation.setParentId(pending.getId());
         } else {

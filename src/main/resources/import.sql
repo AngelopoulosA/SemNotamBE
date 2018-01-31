@@ -1,13 +1,8 @@
-INSERT INTO `role` (`id`, `description`, `name`) VALUES (1, 'Rule Developer', 'ruledeveloper');
-INSERT INTO `role` (`id`, `description`, `name`) VALUES (2, 'Repository Admin', 'reposistoryadmin');
-INSERT INTO `role` (`id`, `description`, `name`) VALUES (3, 'User', 'user');
-INSERT INTO `role` (`id`, `description`, `name`) VALUES (4, 'Domain Expert', 'domainexpert');
-
-INSERT INTO `user` (`id`, `name`, `password`, `username`, `role_id`) VALUES (1, 'Rule Developer 1', 'pw', 'ruledev1', 1);
-INSERT INTO `user` (`id`, `name`, `password`, `username`, `role_id`) VALUES (2, 'Rule Develeper 2', 'pw', 'ruledev2', 1);
-INSERT INTO `user` (`id`, `name`, `password`, `username`, `role_id`) VALUES (3, 'Repository Admin', 'pw', 'repoadmin', 2);
-INSERT INTO `user` (`id`, `name`, `password`, `username`, `role_id`) VALUES (4, 'User', 'pw', 'user', 3);
-INSERT INTO `user` (`id`, `name`, `password`, `username`, `role_id`) VALUES (5, 'Domain Expert', 'pw', 'domainexpert', 4);
+INSERT INTO `user` (`id`, `name`, `password`, `username`, `role`) VALUES (1, 'Rule Developer 1', 'pw', 'ruledev1', 0);
+INSERT INTO `user` (`id`, `name`, `password`, `username`, `role`) VALUES (2, 'Rule Develeper 2', 'pw', 'ruledev2', 0);
+INSERT INTO `user` (`id`, `name`, `password`, `username`, `role`) VALUES (3, 'Repository Admin', 'pw', 'repoadmin', 1);
+INSERT INTO `user` (`id`, `name`, `password`, `username`, `role`) VALUES (4, 'User', 'pw', 'user', 2);
+INSERT INTO `user` (`id`, `name`, `password`, `username`, `role`) VALUES (5, 'Domain Expert', 'pw', 'domainexpert', 3);
 
 INSERT INTO `contextdb` (`name`) VALUES ('allInterests_allFlightPhases_allEventScenarios');
 INSERT INTO `contextdb` (`name`) VALUES ('aircraft_allFlightPhases_obstruction');

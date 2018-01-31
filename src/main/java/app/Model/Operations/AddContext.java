@@ -3,6 +3,7 @@ package app.Model.Operations;
 import app.Model.ComposedOperation;
 import app.Model.Flora2.Context;
 import app.Model.Message;
+import app.Model.Role;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -42,13 +43,13 @@ public class AddContext extends ComposedOperation {
     public Step[] getAllowedOperations() {
         if (getParent() instanceof SplitContext) {
             return new Step[] {
-                    new Step(ContextualizeRule.class, true),
+                    new Step(new ContextualizeRule(), true),
             };
         }
         return new Step[] {
-                new Step(DeleteRule.class, true),
-                new Step(EditRule.class, true),
-                new Step(AddRule.class, true),
+                new Step(new DeleteRule(), true),
+                new Step(new EditRule(), true),
+                new Step(new AddRule(), true),
         };
     }
 
@@ -85,5 +86,10 @@ public class AddContext extends ComposedOperation {
 
 
         return messages;
+    }
+
+
+    public Role canBeExecutedBy() {
+        return Role.RepositoryAdmin;
     }
 }

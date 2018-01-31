@@ -16,8 +16,6 @@ public class User {
 	@ManyToMany(mappedBy = "recipients")
 	private Set<Message> messages;
 
-	@ManyToOne
-	@JoinColumn(name = "role_id")
 	private Role role;
 
 	@ManyToMany(mappedBy = "ruleDevelopers")

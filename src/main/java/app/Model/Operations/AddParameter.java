@@ -2,6 +2,7 @@ package app.Model.Operations;
 
 import app.Model.ComposedOperation;
 import app.Model.Flora2.ParameterValue;
+import app.Model.Role;
 
 import javax.persistence.Entity;
 import java.util.Date;
@@ -29,7 +30,11 @@ public class AddParameter extends ComposedOperation {
     @Override
     public Step[] getAllowedOperations() {
         return new Step[] {
-                new Step(AddParameterValue.class, true),
+                new Step(new AddParameterValue(), true),
         };
+    }
+
+    public Role canBeExecutedBy() {
+        return Role.RepositoryAdmin;
     }
 }

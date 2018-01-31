@@ -1,6 +1,7 @@
 package app.Model.Operations;
 
 import app.Model.ComposedOperation;
+import app.Model.Role;
 
 import javax.persistence.Entity;
 import java.util.Date;
@@ -28,9 +29,13 @@ public class UpdateContext extends ComposedOperation {
     @Override
     public Step[] getAllowedOperations() {
         return new Step[] {
-                new Step(DeleteRule.class, true),
-                new Step(EditRule.class, true),
-                new Step(AddRule.class, true),
+                new Step(new DeleteRule(), true),
+                new Step(new EditRule(), true),
+                new Step(new AddRule(), true),
         };
+    }
+
+    public Role canBeExecutedBy() {
+        return Role.RepositoryAdmin;
     }
 }

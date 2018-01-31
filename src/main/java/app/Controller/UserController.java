@@ -2,26 +2,20 @@ package app.Controller;
 
 import app.Model.Role;
 import app.Model.User;
-import app.Repository.RoleRepository;
 import app.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import java.util.Optional;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @CrossOrigin
 @Controller    // This means that this class is a Controller
 @RequestMapping(path="/users") // This means URL's start with /demo (after Application path)
 public class UserController {
 	private final UserRepository userRepository;
-	private final RoleRepository roleRepository;
 
 	@Autowired
-	public UserController(UserRepository userRepository, RoleRepository roleRepository) {
+	public UserController(UserRepository userRepository) {
 		this.userRepository = userRepository;
-		this.roleRepository = roleRepository;
 	}
 
 	@PostMapping(path="") // Map ONLY GET Requests
@@ -31,18 +25,11 @@ public class UserController {
 			return "User Parameter is missing";
 		}
 
-		long userRoleId = user.getRole().getId();
-		Role role = roleRepository.findOne(userRoleId);
-
-		if(role == null){
-			return "Role not found";
-		}
-
 		User newUser = new User();
 		newUser.setName(user.getName());
 		newUser.setUsername(user.getUsername());
 		newUser.setPassword(user.getPassword());
-		newUser.setRole(role);
+		newUser.setRole(user.getRole());
 		userRepository.save(newUser);
 		return "Saved";
 	}
@@ -55,8 +42,7 @@ public class UserController {
 
 	@GetMapping(path="/ruleDevelopers")
 	public @ResponseBody Iterable<User> getRuleDevelopers() {
-		Role ruleDeveloper = roleRepository.findOne(1L);
-		return userRepository.findAllByRole(ruleDeveloper);
+		return userRepository.findAllByRole(Role.RuleDeveloper);
 	}
 
 	@DeleteMapping(path="/{id}")

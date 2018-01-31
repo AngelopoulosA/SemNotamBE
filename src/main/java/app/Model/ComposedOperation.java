@@ -39,9 +39,13 @@ public abstract class ComposedOperation extends Operation {
 
     public abstract Step[] getAllowedOperations();
 
-    public boolean checkIfAllowed (Operation operation) {
+    public boolean checkIfAllowed (ComposedOperation operation, User user) {
         Step[] allowedOperations = getAllowedOperations();
-        return Arrays.asList(allowedOperations).stream().filter(s -> s.getOperationClass() == operation.getClass()).findFirst().isPresent();
+        boolean generally = Arrays.asList(allowedOperations).stream()
+                .filter(s -> s.getOperationClass().getClass() == operation.getClass())
+                .findFirst()
+                .isPresent();
+        return generally && operation.canBeExecutedBy() == user.getRole();
     }
 
     public ComposedOperation findCurrentOperation() {
@@ -63,4 +67,6 @@ public abstract class ComposedOperation extends Operation {
     public boolean onExecuted(ContextDBRepository contextDBRepository) {
         return true;
     }
+
+    public abstract Role canBeExecutedBy();
 }

@@ -5,6 +5,7 @@ import app.Model.Flora2.Context;
 import app.Model.Flora2.Rule;
 import app.Model.InvalidOperationException;
 import app.Model.Message;
+import app.Model.Role;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -34,9 +35,9 @@ public class EditRule extends ComposedOperation {
     @Override
     public Step[] getAllowedOperations() {
         return new Step[] {
-                new Step(EditRule.class, true),
-                new Step(AddRule.class, true),
-                new Step(DeleteRule.class, true),
+                new Step(new EditRule(), true),
+                new Step(new AddRule(), true),
+                new Step(new DeleteRule(), true),
         };
     }
 
@@ -74,5 +75,9 @@ public class EditRule extends ComposedOperation {
             }
 
         return messages;
+    }
+
+    public Role canBeExecutedBy() {
+        return Role.RuleDeveloper;
     }
 }
