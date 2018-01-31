@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -40,9 +41,9 @@ public class MessageController {
     @PostMapping(path="")
     public @ResponseBody String addMessage (@RequestBody Message message){
 
-        if (message.getTitle().isEmpty() || message.getContent().isEmpty()){
+        /*if (message.getTitle().isEmpty() || message.getContent().isEmpty()){
             return "missing parameters";
-        }
+        }*/
 
         long userId = message.getSender().getId();
         User user = userRepository.findOne(userId);
@@ -73,13 +74,18 @@ public class MessageController {
     public @ResponseBody Message updateMessage (@PathVariable(value="id") long id, @RequestBody Message updatedMessage, @RequestHeader("User") Long user){
         Message message = messageRepository.findOne(id);
 
-        if(message != null){
+        if (message != null){
             message.setRead(updatedMessage.isRead());
-            if(!message.isAcknowledged() && updatedMessage.isAcknowledged()) {
-                boolean result = composedOperationLogic.acknowledgeMessage(message.getSendMessageOperation(),user);
-                if (result) {
+            if (!message.isAcknowledged() && updatedMessage.isAcknowledged()) {
+                if (message.getSendMessageOperation() != null) {
+                    boolean result = composedOperationLogic.acknowledgeMessage(message.getSendMessageOperation(),user);
+                    if (result) {
+                        message.setAcknowledged(true);
+                    }
+                } else {
                     message.setAcknowledged(true);
                 }
+
             }
             messageRepository.save(message);
             return message;
@@ -109,21 +115,19 @@ public class MessageController {
     @GetMapping(path="/{id}")
     public @ResponseBody
     Message getMessageDetails (@PathVariable(value="id") long id) {
-        return messageRepository.findOne(id);
+        Message message = messageRepository.findOne(id);
+        message.setRead(true);
+        messageRepository.save(message);
+        return message;
     }
 
 
-    @GetMapping(path="/fromUser/{id}")
+    @GetMapping(path="/forUser")
     public @ResponseBody
-    List<Message> getMessagesFromUser(@PathVariable("id") long id) {
-        Iterable<Message> allMessages = messageRepository.findAll();
-        List<Message> filteredMessages = new ArrayList<>();
-        for(Message message : allMessages){
-            if(message.getSender().getId() == id){
-                filteredMessages.add(message);
-            }
-        }
-        return filteredMessages;
+    List<Message> getMessagesForUser(@RequestHeader("User") Long user) {
+        return StreamSupport.stream(messageRepository.findAll().spliterator(), false)
+                .filter(m -> m.getRecipients().stream().anyMatch(r -> r.getId() == user))
+                .collect(Collectors.toList());
     }
 
 

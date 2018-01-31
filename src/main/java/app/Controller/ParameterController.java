@@ -1,6 +1,10 @@
 package app.Controller;
 
 import app.Model.Flora2.Parameter;
+import app.Model.Operations.AddParameterValue;
+import app.Model.Operations.SplitContext;
+import app.Model.Operations.UpdateParameter;
+import app.Repository.ComposedOperationLogic;
 import app.Repository.Flora2Repository;
 import app.Model.Flora2.ParameterValue;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +19,13 @@ import java.util.stream.Collectors;
 @RequestMapping(path="/parameters")
 @CrossOrigin
 public class ParameterController {
+    private final ComposedOperationLogic composedOperationLogic;
 
-	@Autowired
-	public ParameterController() {
-    };
+    @Autowired
+    public ParameterController(ComposedOperationLogic composedOperationLogic) {
+        this.composedOperationLogic = composedOperationLogic;
+    }
+
 
 	@GetMapping(path="")
 	public @ResponseBody
@@ -123,31 +130,37 @@ public class ParameterController {
 
     @PutMapping(path="/{id}")
     public @ResponseBody
-    Parameter updateParameterDetParamValue (@PathVariable(value="id") String id, @RequestBody Parameter parameter) {
+    Parameter updateParameterDetParamValue (@PathVariable(value="id") String id, @RequestBody Parameter parameter, @RequestHeader("User") Long user) {
         try (Flora2Repository fl = new Flora2Repository()) {
 
-            String detParamValueDef = parameter.getDetParamValue().stream().collect(Collectors.joining("\r\n"));
-            fl.updateDetParamValue(id, detParamValueDef);
+            if (composedOperationLogic.checkAndStartOperation(fl, new UpdateParameter(parameter), user)) {
+                String detParamValueDef = parameter.getDetParamValue().stream().collect(Collectors.joining("\r\n"));
+                fl.updateDetParamValue(id, detParamValueDef);
 
-            Thread.sleep(1000);
-            fl.restart();
-            return getParameterDetails(parameter.getName());
+                Thread.sleep(1000);
+                fl.restart();
+                return getParameterDetails(parameter.getName());
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
+        return null;
     }
 
     @PostMapping(path="/{id}")
     public @ResponseBody
-    Parameter addParameterValue (@PathVariable(value="id") String parameterId, @RequestBody ParameterValue parameterValue) {
+    Parameter addParameterValue (@PathVariable(value="id") String parameterId, @RequestBody ParameterValue parameterValue, @RequestHeader("User") Long user) {
         try (Flora2Repository fl = new Flora2Repository()) {
-
-            String[] parents = parameterValue.getParents().stream().map(p -> p.getName()).toArray(String[]::new);
-            boolean result = fl.addParameterValue(parameterId, parameterValue.getName(), parents, null);
-            if(result) {
+            if (composedOperationLogic.checkAndStartOperation(fl, new AddParameterValue(parameterId, parameterValue), user)) {
+                String[] parents = parameterValue.getParents().stream().map(p -> p.getName()).toArray(String[]::new);
+                boolean result = fl.addParameterValue(parameterId, parameterValue.getName(), parents, null);
+                if(result) {
+                    return getParameterDetails(parameterId);
+                }
+            } else {
                 return getParameterDetails(parameterId);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
