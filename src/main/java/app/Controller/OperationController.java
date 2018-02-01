@@ -38,10 +38,11 @@ public class OperationController {
         User user = userRepository.findOne(userId);
         ComposedOperation pending = getPendingOperation();
         ComposedOperation root = composedOperationRepository.findFirstByParentIsNull();
+        boolean fatalError = root != null && root.isFatalErrorSomewhere();
         Map<String,Boolean> allowedOperations;
         if (root == null){
             allowedOperations = getAllOperations().stream().collect(Collectors.toMap(o -> o.getConcreteType(), o -> o.canBeExecutedBy() == user.getRole()));
-        } else if (pending != null && !pending.isExecuted()) {
+        } else if (!fatalError && pending != null && !pending.isExecuted()) {
             allowedOperations = getAllOperations().stream().collect(Collectors.toMap(o -> o.getConcreteType(), o -> false));
             for (Step allowedStep: pending.getAllowedOperations()) {
                 allowedOperations.put(allowedStep.getOperation(),allowedStep.getOperationClass().canBeExecutedBy() == user.getRole());
@@ -51,7 +52,7 @@ public class OperationController {
         }
 
         boolean transactionOperationsAllowed = (user.getRole() == Role.RepositoryAdmin) || (root != null && root.getUserId() == userId);
-        allowedOperations.put("CommitTransaction", root != null && root.isExecuted() && transactionOperationsAllowed);
+        allowedOperations.put("CommitTransaction", !fatalError && root != null && root.isExecuted() && transactionOperationsAllowed);
         allowedOperations.put("RollbackTransaction", transactionOperationsAllowed);
         return allowedOperations;
     }
@@ -81,8 +82,9 @@ public class OperationController {
     @PostMapping(path="/rollback")
     public @ResponseBody
     ComposedOperation rollbackTransaction () {
-        try (Flora2Repository fl = new Flora2Repository()) {
-            fl.rollbackTransaction();
+        try {
+            Flora2Repository.rollbackTransaction();
+            rollbackSpecialOperations();
             truncateDB();
             return null;
         } catch (Exception e) {
@@ -91,12 +93,41 @@ public class OperationController {
         }
     }
 
+    private void rollbackSpecialOperations() {
+        Iterable<Operation> allOperations = operationRepository.findAll();
+        for (Operation o : allOperations) {
+            if (o instanceof AddContext) {
+                String context = o.getAffectedElement();
+                try {
+                    contextDBRepository.delete(context);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if (o instanceof DeleteContext) {
+                String context = o.getAffectedElement();
+                try {
+                    ContextDB contextDB = new ContextDB(context);
+                    Long[] ruleDeveloperIDs = ((DeleteContext) o).getRuleDevelopers();
+                    for (Long ruleDeveloperId : ruleDeveloperIDs) {
+                        contextDB.getRuleDevelopers().add(userRepository.findOne(ruleDeveloperId));
+                    }
+                    contextDBRepository.save(contextDB);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     private void truncateDB() {
+
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
         entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=0;").executeUpdate();
         entityManager.createNativeQuery("TRUNCATE TABLE operation").executeUpdate();
         entityManager.createNativeQuery("TRUNCATE TABLE message").executeUpdate();
+        entityManager.createNativeQuery("TRUNCATE TABLE message_recipients").executeUpdate();
         entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=1;").executeUpdate();
         entityManager.getTransaction().commit();
         entityManager.close();

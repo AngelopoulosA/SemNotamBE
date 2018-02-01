@@ -47,6 +47,9 @@ public class Startup implements ApplicationListener<ApplicationReadyEvent> {
     }
 
     /**
+     * If the ddlStrategy is set to create the CBRM files are dropped and initiated with those of CBRM-template.
+     * In this case the right Paths for the Context Files are set within the ctxModelAIM.flr.
+     *
      * This event is executed as late as conceivably possible to indicate that
      * the application is ready to service requests.
      */
@@ -72,39 +75,5 @@ public class Startup implements ApplicationListener<ApplicationReadyEvent> {
                 e.printStackTrace();
             }
         }
-
-        //initData();
     }
-
-    private void initData() {
-//        User rd1 = userRepository.findOne(1L);
-//        User rd2 = userRepository.findOne(2L);
-//
-//
-//        Message m1 = new Message("New Context aircraft_allFlightPhases_treeObstruction added", "New Context aircraft_allFlightPhases_treeObstruction added", rd1);
-//        messageRepository.save(m1);
-//        Message m2 = new Message("Context aircraft_allFlightPhases_treeObstruction added below aircraft_allFlightPhases_obstruction", "Context aircraft_allFlightPhases_treeObstruction added below aircraft_allFlightPhases_obstruction", rd2);
-//        messageRepository.save(m2);
-//
-//        ComposedOperation co1 = new SplitContext(null, new Date(), false, "", 3L, "aircraft_allFlightPhases_obstruction");
-//        co1.setId(1L);
-//        ComposedOperation ao1 = new AddParameterValue(1L, new Date(), true, "", 3L, "treeObstruction");
-//        ComposedOperation ao2 = new AddParameterValue(1L, new Date(), true, "", 3L, "nonTreeObstruction");
-//        ComposedOperation co2 = new AddContext(1L, new Date(), false, "", 3L, "aircraft_allFlightPhases_treeObstruction");
-//        co2.setId(4L);
-//        SendMessage sm1 = new SendMessage(4L, "", 3L, m1);
-//        SendMessage sm2 = new SendMessage(4L, "", 3L, m2);
-//
-//
-//        operationRepository.save(co1);
-//        operationRepository.save(ao1);
-//        operationRepository.save(ao2);
-//        operationRepository.save(co2);
-//        operationRepository.save(sm1);
-//        operationRepository.save(sm2);
-
-
-    }
-
-
 }

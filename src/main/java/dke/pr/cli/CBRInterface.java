@@ -129,13 +129,13 @@ public class CBRInterface extends Flora2CLI {
 	 * @return file path of rule file
 	 * @throws IOException
 	 */
-	public String getCtxFile(String ctx) throws Exception {
+	public String getCtxFile(String ctx) throws IOException {
 		String cmd = String.format("%s:%s[file->?ctxf]@%s.", ctx,
 				CONTEXT_CLASS, MODEL_MODULE);
 		String str = issueCommand(cmd);
 		List<String> ret = parseSingleVar(str);
 		if (ret.size() == 0)
-			throw new Exception(
+			throw new IOException(
 					"No file for context defined or context does not exist");
 		return ret.get(0);
 	}
@@ -317,7 +317,7 @@ public class CBRInterface extends Flora2CLI {
 	 * @param ctx
 	 * @return hashmap with rule id as key and rule code as value
 	 */
-	public HashMap<String, String> getRules(String ctx) throws Exception {
+	public HashMap<String, String> getRules(String ctx) throws IOException {
 		String file = this.getCtxFile(ctx);
 		file = file.replace("'", "");
 		HashMap<String, String> rules = new HashMap<String, String>();
@@ -527,7 +527,7 @@ public class CBRInterface extends Flora2CLI {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean delCtx(String ctx, boolean fileAlso) throws Exception {
+	public boolean delCtx(String ctx, boolean fileAlso) throws IOException {
 		Path temp = Paths.get(this.getCtxFile(ctx).replace("'", ""));
 
 		if (fileAlso)

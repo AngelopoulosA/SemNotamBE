@@ -49,7 +49,7 @@ public class DeleteRule extends ComposedOperation {
     }
 
     @Override
-    public List<Message> generateMessages() {
+    public List<Message> generateMessages(ContextDBRepository contextDBRepository) {
         String ruleId = getAffectedElement();
         List<Message> messages = new LinkedList<>();
         List<Context> childContexts = context.getChildrenFlat();

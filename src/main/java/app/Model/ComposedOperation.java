@@ -2,6 +2,7 @@ package app.Model;
 
 import app.Model.Operations.Step;
 import app.Repository.ContextDBRepository;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -37,6 +38,7 @@ public abstract class ComposedOperation extends Operation {
         this.operations = operations;
     }
 
+    @JsonIgnore
     public abstract Step[] getAllowedOperations();
 
     public boolean checkIfAllowed (ComposedOperation operation, User user) {
@@ -60,7 +62,7 @@ public abstract class ComposedOperation extends Operation {
         return this;
     }
 
-    public List<Message> generateMessages() {
+    public List<Message> generateMessages(ContextDBRepository contextDBRepository) {
         return new LinkedList<>();
     }
 
@@ -69,4 +71,16 @@ public abstract class ComposedOperation extends Operation {
     }
 
     public abstract Role canBeExecutedBy();
+
+    public boolean isFatalErrorSomewhere() {
+        boolean fatalError = this.isFatalError();
+        for (Operation o: operations) {
+            if(o.isExecuted() == false) {
+                if (o instanceof ComposedOperation) {
+                    fatalError = fatalError || ((ComposedOperation) o).isFatalErrorSomewhere();
+                }
+            }
+        }
+        return fatalError;
+    }
 }

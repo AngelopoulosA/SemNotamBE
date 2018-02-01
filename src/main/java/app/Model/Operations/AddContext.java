@@ -1,9 +1,11 @@
 package app.Model.Operations;
 
 import app.Model.ComposedOperation;
+import app.Model.ContextDB;
 import app.Model.Flora2.Context;
 import app.Model.Message;
 import app.Model.Role;
+import app.Repository.ContextDBRepository;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -15,6 +17,7 @@ import javax.persistence.Transient;
 public class AddContext extends ComposedOperation {
     @Transient
     private Context context;
+
 
     public AddContext(Long parentId, Date executedAt, boolean isExecuted, String text, Long executedBy, String affectedElement) {
         super(parentId, executedAt, isExecuted, text, executedBy, affectedElement);
@@ -54,7 +57,7 @@ public class AddContext extends ComposedOperation {
     }
 
     @Override
-    public List<Message> generateMessages() {
+    public List<Message> generateMessages(ContextDBRepository contextDBRepository) {
         List<Message> messages = new LinkedList<>();
 
         Message m = new Message();
@@ -69,7 +72,7 @@ public class AddContext extends ComposedOperation {
         if (getParent() instanceof SplitContext) {
 
             String parentContextName = getParent().getAffectedElement();
-            Context parentContext = context.getParents().stream().filter(c -> c.getName().equals(parentContextName)).findFirst().get();
+            ContextDB parentContext = contextDBRepository.findOne(parentContextName);
 
             m.setContent("Context " + context.getName() + " was added for splitting Context " + parentContextName);
 

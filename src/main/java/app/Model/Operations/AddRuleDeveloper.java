@@ -10,8 +10,6 @@ public class AddRuleDeveloper extends ComposedOperation {
 
     public Step[] getAllowedOperations() {
         return new Step[] {
-                new Step(new EditRule(), true),
-                new Step(new DeleteRule(), true),
         };
     }
 

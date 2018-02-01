@@ -1,6 +1,7 @@
 package app.Model;
 
 import javax.persistence.*;
+import java.util.LinkedList;
 import java.util.List;
 
 @Entity
@@ -19,6 +20,11 @@ public class ContextDB {
     public ContextDB(String name, List<User> ruleDevelopers) {
         this.name = name;
         this.ruleDevelopers = ruleDevelopers;
+    }
+
+    public ContextDB(String name) {
+        this.name = name;
+        this.ruleDevelopers = new LinkedList<>();
     }
 
     public String getName() {

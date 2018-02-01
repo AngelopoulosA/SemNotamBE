@@ -9,9 +9,6 @@ import java.util.Date;
 @Entity
 public class UpdateContext extends ComposedOperation {
 
-    public UpdateContext(Long parentId, Date executedAt, boolean isExecuted, String text, Long executedBy, String affectedElement) {
-        super(parentId, executedAt, isExecuted, text, executedBy, affectedElement);
-    }
 
     public UpdateContext() {
     }

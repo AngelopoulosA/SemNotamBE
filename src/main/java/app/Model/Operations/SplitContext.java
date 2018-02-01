@@ -48,7 +48,7 @@ public class SplitContext extends ComposedOperation {
     }
 
     @Override
-    public List<Message> generateMessages() {
+    public List<Message> generateMessages(ContextDBRepository contextDBRepository) {
         List<Message> messages = new LinkedList<>();
         Message m = new Message();
         m.setTitle("Context " + context.getName() + " will be splitted");

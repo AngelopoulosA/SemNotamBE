@@ -84,4 +84,29 @@ public class Context {
         }
         return childrenFlat;
     }
+
+    @JsonIgnore
+    public List<Context> getParentsFlat() {
+        List<Context> parentsFlat = new LinkedList<>();
+        for (Context c : parents) {
+            parentsFlat.addAll(c.getParentsFlat());
+            parentsFlat.add(c);
+        }
+        return parentsFlat;
+    }
+
+    @JsonIgnore
+    public Context findContext(String id) {
+        if (getName().equals(id)) {
+            return this;
+        }
+
+        for (Context c : children) {
+            Context found = c.findContext(id);
+            if (found != null) {
+                return found;
+            }
+        }
+        return null;
+    }
 }

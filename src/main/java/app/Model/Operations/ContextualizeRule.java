@@ -53,7 +53,7 @@ public class ContextualizeRule extends ComposedOperation {
     }
 
     @Override
-    public List<Message> generateMessages() {
+    public List<Message> generateMessages(ContextDBRepository contextDBRepository) {
         List<Message> messages = new LinkedList<>();
 
         Message m = new Message();

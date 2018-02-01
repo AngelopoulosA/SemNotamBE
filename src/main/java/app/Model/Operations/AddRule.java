@@ -6,6 +6,7 @@ import app.Model.Flora2.Rule;
 import app.Model.InvalidOperationException;
 import app.Model.Message;
 import app.Model.Role;
+import app.Repository.ContextDBRepository;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -50,9 +51,9 @@ public class AddRule extends ComposedOperation {
     }
 
     @Override
-    public List<Message> generateMessages() {
+    public List<Message> generateMessages(ContextDBRepository contextDBRepository) {
         List<Message> messages = new LinkedList<>();
-        if (!(getParent() instanceof  ContextualizeRule)) {
+        if (!(getParent() instanceof  ContextualizeRule) && !(getParent() instanceof  DecontextualizeRule)) {
             String ruleId = getAffectedElement();
             List<Context> childContexts = context.getChildrenFlat();
             if(rule == null) {

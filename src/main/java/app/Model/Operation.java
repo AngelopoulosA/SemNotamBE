@@ -39,21 +39,7 @@ public abstract class Operation {
     @Column(name = "parent_id", updatable = true, insertable = true)
     private Long parentId;
 
-    public ComposedOperation getParent() {
-        return parent;
-    }
-
-    public void setParent(ComposedOperation parent) {
-        this.parent = parent;
-    }
-
-    public Long getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Long parentId) {
-        this.parentId = parentId;
-    }
+    private boolean fatalError;
 
     public Operation() {
     }
@@ -123,10 +109,37 @@ public abstract class Operation {
         this.affectedElement = affectedElement;
     }
 
-    public abstract String getAbstractType();
+    public ComposedOperation getParent() {
+        return parent;
+    }
+
+    public void setParent(ComposedOperation parent) {
+        this.parent = parent;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
+    public boolean isFatalError() {
+        return fatalError;
+    }
+
+    public void setFatalError(boolean fatalError) {
+        this.fatalError = fatalError;
+    }
+
     public String getConcreteType() {
         return this.getClass().getSimpleName();
     }
+
+    public abstract String getAbstractType();
+
     public abstract String getVerb();
+
     public abstract String getAffectedElementType();
 }
