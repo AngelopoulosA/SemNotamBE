@@ -3,6 +3,7 @@ package app.Model.Operations;
 import app.Model.ComposedOperation;
 import app.Model.Flora2.Context;
 import app.Model.Message;
+import app.Model.Role;
 import app.Repository.ContextDBRepository;
 import app.Repository.Flora2Repository;
 
@@ -40,14 +41,14 @@ public class SplitContext extends ComposedOperation {
     @Override
     public Step[] getAllowedOperations() {
         return new Step[] {
-            new Step(AddParameterValue.class, true),
-            new Step(UpdateParameter.class, true),
-            new Step(AddContext.class, false)
+            new Step(new AddParameterValue(), true),
+            new Step(new UpdateParameter(), true),
+            new Step(new AddContext(), false)
         };
     }
 
     @Override
-    public List<Message> generateMessages() {
+    public List<Message> generateMessages(ContextDBRepository contextDBRepository) {
         List<Message> messages = new LinkedList<>();
         Message m = new Message();
         m.setTitle("Context " + context.getName() + " will be splitted");
@@ -60,5 +61,9 @@ public class SplitContext extends ComposedOperation {
         messages.add(m);
 
         return messages;
+    }
+
+    public Role canBeExecutedBy() {
+        return Role.RepositoryAdmin;
     }
 }

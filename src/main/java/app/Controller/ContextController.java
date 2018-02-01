@@ -1,7 +1,9 @@
 package app.Controller;
 
 import app.Model.ContextDB;
+import app.Model.FatalFlora2Error;
 import app.Model.Flora2.Rule;
+import app.Model.InvalidOperationException;
 import app.Model.Operations.*;
 import app.Model.User;
 import app.Repository.ComposedOperationLogic;
@@ -40,47 +42,36 @@ public class ContextController {
         try (Flora2Repository fl = new Flora2Repository()) {
             return fl.getCtxs();
         } catch (IOException e) {
-            return null;
+            e.printStackTrace();
+            throw new FatalFlora2Error(e);
         }
     }
+
+    @GetMapping(path="/{id}/parents")
+    public @ResponseBody
+    List<String> getAllParentContextsFlat (@PathVariable(value="id") String id) {
+        Context root = getContextHierarchy();
+        List<Context> parentsFlat = root.findContext(id).getParentsFlat();
+        return parentsFlat.stream().map(c -> c.getName()).collect(Collectors.toList());
+    }
+
+    @GetMapping(path="/{id}/children")
+    public @ResponseBody
+    List<String> getAllChildContextsFlat (@PathVariable(value="id") String id) {
+        Context root = getContextHierarchy();
+        List<Context> childrenFlat = root.findContext(id).getChildrenFlat();
+        return childrenFlat.stream().map(c -> c.getName()).collect(Collectors.toList());
+    }
+
 
     @GetMapping(path="/hierarchy")
     public @ResponseBody
     Context getContextHierarchy () {
         try (Flora2Repository fl = new Flora2Repository()) {
-
-            List<String[]> rawHierarchy = fl.getCtxHierarchy();
-
-            if(rawHierarchy.size() > 0) {
-                Map<String, Context> contexts = new Hashtable<>();
-
-                for (String[] hierarchy : rawHierarchy) {
-                    Context parent = contexts.get(hierarchy[1]);
-                    if(parent == null) {
-                        parent = new Context(hierarchy[1]);
-                        contexts.put(parent.getName(), parent);
-                    }
-                    Context child = contexts.get(hierarchy[0]);
-                    if(child == null) {
-                        child = new Context(hierarchy[0]);
-                        contexts.put(child.getName(), child);
-                    }
-                    parent.getChildren().add(child);
-                    child.getParents().add(parent);
-                }
-
-                for (Context context : contexts.values()) {
-                    List<String[]> ctxInfo = fl.getCtxInfo(context.getName());
-                    for (String[] parameterValue : ctxInfo) {
-                        context.getParameterValues().put(parameterValue[0], parameterValue[1]);
-                    }
-                }
-                Context root = contexts.values().stream().filter(pv -> pv.getParents().isEmpty()).findFirst().get();
-                return root;
-            }
-            return null;
+            return fl.getRootContext(contextDBRepository);
         } catch (IOException e) {
-            return null;
+            e.printStackTrace();
+            throw new FatalFlora2Error(e);
         }
     }
 
@@ -104,7 +95,7 @@ public class ContextController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            throw new FatalFlora2Error(e);
         }
     }
 
@@ -120,7 +111,7 @@ public class ContextController {
             return null;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            throw new FatalFlora2Error(e);
         }
     }
 
@@ -136,7 +127,7 @@ public class ContextController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            throw new FatalFlora2Error(e);
         }
     }
 
@@ -144,27 +135,31 @@ public class ContextController {
     public @ResponseBody
     Context updateRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId, @RequestBody Rule rule, @RequestHeader("User") Long user) {
         try (Flora2Repository fl = new Flora2Repository()) {
-            if (composedOperationLogic.checkAndStartOperation(fl, new EditRule(fl.getContext(contextDBRepository, id), rule), user)) {
-                boolean result = fl.delRule(id, ruleId);
+            composedOperationLogic.checkAndStartOperation(fl, new EditRule(fl.getContext(contextDBRepository, id), rule), user);
+            boolean result = fl.delRule(id, ruleId);
+            if (result) {
+                result = fl.addRule(id, "@!{"+rule.getId()+"}\r\n"+rule.getBody());
                 if (result) {
-                    result = fl.addRule(id, "@!{"+rule.getId()+"}\r\n"+rule.getBody());
-                    if (result) {
-                        return getContextDetails(id);
-                    }
+                    return getContextDetails(id);
                 }
             }
             return getContextDetails(id); //TODO Exception
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            throw new FatalFlora2Error(e);
         }
     }
 
     @PostMapping(path="")
     public @ResponseBody
-    Context addContext (@RequestBody Context context, @RequestHeader("User") Long user) {
+    Context addContext (@RequestBody Context context, @RequestHeader("User") Long user) throws Exception {
         try (Flora2Repository fl = new Flora2Repository()) {
+            if (fl.contextWithParameterValuesExits(context)) {
+                throw new InvalidOperationException("Context with same values already exists");
+            }
+
+            composedOperationLogic.checkAndStartOperation(fl, new AddContext(context), user);
             String ctxFile = fl.getCtxFileName(context.getName());
             String paramValues = context.getParameterValues().entrySet().stream().map(e -> e.getKey() + "->" + e.getValue()).collect(Collectors.joining(","));
             String ctxDefinition = context.getName() + ":AIMCtx[" + paramValues + ",file->'" + ctxFile + "'].";
@@ -177,22 +172,24 @@ public class ContextController {
                 ContextDB contextDB = new ContextDB(context.getName(), context.getRuleDevelopers());
                 contextDBRepository.save(contextDB);
                 Thread.sleep(1000);
-                if (composedOperationLogic.checkAndStartOperation(fl, new AddContext(fl.getContext(contextDBRepository, context.getName())), user)) {
-                    return getContextHierarchy();
-                }
+                return getContextHierarchy();
             }
 
-            return null;
-        } catch (Exception e) {
+            throw new InvalidOperationException();
+        } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            throw new FatalFlora2Error(e);
         }
     }
 
     @DeleteMapping(path="/{id}")
     public @ResponseBody
-    boolean deleteContext (@PathVariable(value="id") String id, @RequestHeader("User") Long user) {
+    boolean deleteContext (@PathVariable(value="id") String id, @RequestHeader("User") Long user) throws InterruptedException {
         try (Flora2Repository fl = new Flora2Repository()) {
+            if (fl.getRootContext(contextDBRepository).getName().equals(id)) {
+                throw new InvalidOperationException("Cannot delete Root context");
+            }
+
             if (composedOperationLogic.checkAndStartOperation(fl, new DeleteContext(fl.getContext(contextDBRepository, id)), user)) {
                 boolean result = fl.delCtx(id, true);
                 if(result) {
@@ -203,9 +200,9 @@ public class ContextController {
                 return result;
             }
             return false;
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            throw new FatalFlora2Error(e);
         }
     }
 
@@ -220,7 +217,7 @@ public class ContextController {
             return getContextDetails(id);
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            throw new FatalFlora2Error(e);
         }
     }
 
@@ -237,15 +234,22 @@ public class ContextController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            throw new FatalFlora2Error(e);
         }
     }
 
     @PostMapping(path="/{id}/merge/{to}")
     public @ResponseBody
     boolean mergeContext (@PathVariable(value="id") String id, @PathVariable(value="to") String toId, @RequestHeader("User") Long user) {
-
-        return false;
+        try (Flora2Repository fl = new Flora2Repository()) {
+            if (composedOperationLogic.checkAndStartOperation(fl, new MergeContext(fl.getContext(contextDBRepository, id), fl.getContext(contextDBRepository, toId)), user)) {
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new FatalFlora2Error(e);
+        }
     }
 
     @PostMapping(path="/{id}/split")
@@ -258,7 +262,7 @@ public class ContextController {
             return false;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            throw new FatalFlora2Error(e);
         }
 
     }
@@ -273,15 +277,22 @@ public class ContextController {
             return false;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            throw new FatalFlora2Error(e);
         }
 
     }
 
     @PostMapping(path="/{id}/rule/{ruleId}/decontextualize/{to}")
     public @ResponseBody
-    boolean decontextualizeRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId, @PathVariable(value="to") String toId, @RequestHeader("User") Long user) {
-        return false;
-
+    boolean decontextualizeRule (@PathVariable(value="id") String id, @PathVariable(value="ruleId") String ruleId, @PathVariable(value="to") String toId, @RequestBody Rule rule, @RequestHeader("User") Long user) {
+        try (Flora2Repository fl = new Flora2Repository()) {
+            if (composedOperationLogic.checkAndStartOperation(fl, new DecontextualizeRule(rule, fl.getContext(contextDBRepository, id), fl.getContext(contextDBRepository, toId)), user)) {
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new FatalFlora2Error(e);
+        }
     }
 }

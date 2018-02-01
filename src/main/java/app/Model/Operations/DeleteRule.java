@@ -5,6 +5,7 @@ import app.Model.Flora2.Context;
 import app.Model.Flora2.Rule;
 import app.Model.InvalidOperationException;
 import app.Model.Message;
+import app.Model.Role;
 import app.Repository.ContextDBRepository;
 import app.Repository.Flora2Repository;
 
@@ -32,8 +33,8 @@ public class DeleteRule extends ComposedOperation {
 
     public Step[] getAllowedOperations() {
         return new Step[] {
-                new Step(EditRule.class, true),
-                new Step(AddRule.class, true),
+                new Step(new EditRule(), true),
+                new Step(new AddRule(), true),
         };
     }
 
@@ -48,7 +49,7 @@ public class DeleteRule extends ComposedOperation {
     }
 
     @Override
-    public List<Message> generateMessages() {
+    public List<Message> generateMessages(ContextDBRepository contextDBRepository) {
         String ruleId = getAffectedElement();
         List<Message> messages = new LinkedList<>();
         List<Context> childContexts = context.getChildrenFlat();
@@ -82,6 +83,10 @@ public class DeleteRule extends ComposedOperation {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public Role canBeExecutedBy() {
+        return Role.RuleDeveloper;
     }
 
 }

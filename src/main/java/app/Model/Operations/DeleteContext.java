@@ -3,6 +3,7 @@ package app.Model.Operations;
 import app.Model.ComposedOperation;
 import app.Model.Flora2.Context;
 import app.Model.Message;
+import app.Model.Role;
 import app.Model.SendMessage;
 import app.Repository.ContextDBRepository;
 import app.Repository.Flora2Repository;
@@ -12,6 +13,7 @@ import javax.persistence.Transient;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class DeleteContext extends ComposedOperation {
@@ -21,15 +23,21 @@ public class DeleteContext extends ComposedOperation {
     }
 
     @Transient
-    private Context context;
+    protected Context context;
+    private Long[] ruleDevelopers;
 
     public DeleteContext(Context context) {
         super();
         this.setAffectedElement(context.getName());
         this.context = context;
+        this.ruleDevelopers = context.getRuleDevelopers().stream().map(rd -> rd.getId()).collect(Collectors.toList()).toArray(new Long[0]);
     }
 
     public DeleteContext() {
+    }
+
+    public Long[] getRuleDevelopers() {
+        return ruleDevelopers;
     }
 
     @Override
@@ -45,14 +53,14 @@ public class DeleteContext extends ComposedOperation {
     @Override
     public Step[] getAllowedOperations() {
         return new Step[] {
-                new Step(DeleteRule.class, true),
-                new Step(EditRule.class, true),
-                new Step(AddRule.class, true),
+                new Step(new DeleteRule(), true),
+                new Step(new EditRule(), true),
+                new Step(new AddRule(), true),
         };
     }
 
     @Override
-    public List<Message> generateMessages() {
+    public List<Message> generateMessages(ContextDBRepository contextDBRepository) {
         List<Message> messages = new LinkedList<>();
         if (this.context.getRules().size() != 0) {
 
@@ -94,5 +102,9 @@ public class DeleteContext extends ComposedOperation {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public Role canBeExecutedBy() {
+        return Role.RepositoryAdmin;
     }
 }

@@ -65,6 +65,7 @@ public class MessageController {
         newMessage.setType(message.getType());
         newMessage.setSender(user);
         newMessage.setRecipients(recipients);
+        newMessage.setType("UserMessage");
         messageRepository.save(newMessage);
 
         return "ok";

@@ -5,6 +5,8 @@ import app.Model.Flora2.Context;
 import app.Model.Flora2.Rule;
 import app.Model.InvalidOperationException;
 import app.Model.Message;
+import app.Model.Role;
+import app.Repository.ContextDBRepository;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -34,9 +36,9 @@ public class EditRule extends ComposedOperation {
     @Override
     public Step[] getAllowedOperations() {
         return new Step[] {
-                new Step(EditRule.class, true),
-                new Step(AddRule.class, true),
-                new Step(DeleteRule.class, true),
+                new Step(new EditRule(), true),
+                new Step(new AddRule(), true),
+                new Step(new DeleteRule(), true),
         };
     }
 
@@ -51,20 +53,21 @@ public class EditRule extends ComposedOperation {
     }
 
     @Override
-    public List<Message> generateMessages() {
+    public List<Message> generateMessages(ContextDBRepository contextDBRepository) {
         List<Message> messages = new LinkedList<>();
             String ruleId = getAffectedElement();
             List<Context> childContexts = context.getChildrenFlat();
-            Rule rule = context.getRules().stream().filter(r -> r.getId().equals(ruleId)).findFirst().orElseGet(null);
+            Rule originalRule = context.getRules().stream().filter(r -> r.getId().equals(ruleId)).findFirst().orElseGet(null);
             if(rule == null) {
                 throw new InvalidOperationException();
             }
+            String originalRuleText = originalRule.getId() + " : " + originalRule.getBody();
             String ruleText = rule.getId() + " : " + rule.getBody();
 
             for (Context c : childContexts) {
                 Message m = new Message();
                 m.setTitle("Rule " + ruleId + " was edited in Parent Context " + context.getName());
-                m.setContent(ruleText);
+                m.setContent(ruleText + "\n was changed to: \n " + ruleText);
                 m.setAffectedElement(c.getName());
                 m.setAffectedElementType("Context");
                 m.setSender(getExecutedBy());
@@ -74,5 +77,9 @@ public class EditRule extends ComposedOperation {
             }
 
         return messages;
+    }
+
+    public Role canBeExecutedBy() {
+        return Role.RuleDeveloper;
     }
 }

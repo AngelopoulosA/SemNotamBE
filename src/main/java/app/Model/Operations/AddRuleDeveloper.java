@@ -1,6 +1,7 @@
 package app.Model.Operations;
 
 import app.Model.ComposedOperation;
+import app.Model.Role;
 
 import javax.persistence.Entity;
 
@@ -9,8 +10,6 @@ public class AddRuleDeveloper extends ComposedOperation {
 
     public Step[] getAllowedOperations() {
         return new Step[] {
-                new Step(EditRule.class, true),
-                new Step(DeleteRule.class, true),
         };
     }
 
@@ -22,5 +21,9 @@ public class AddRuleDeveloper extends ComposedOperation {
     @Override
     public String getAffectedElementType() {
         return "RuleDeveloper";
+    }
+
+    public Role canBeExecutedBy() {
+        return Role.RepositoryAdmin;
     }
 }

@@ -1,5 +1,6 @@
 package app.Controller;
 
+import app.Model.FatalFlora2Error;
 import app.Model.Flora2.Notam;
 import app.Model.Flora2.SemNotam;
 import app.Repository.Flora2Repository;
@@ -53,7 +54,8 @@ public class QueryController {
 
 			return semNotams;
 		} catch (IOException e) {
-			return null;
+			e.printStackTrace();
+			throw new FatalFlora2Error(e);
 		}
 	}
 
@@ -70,7 +72,8 @@ public class QueryController {
 			}
 			return iSpecDetails;
 		} catch (IOException e) {
-			return null;
+			e.printStackTrace();
+			throw new FatalFlora2Error(e);
 		}
 	}
 
@@ -85,7 +88,8 @@ public class QueryController {
 
 			return getIspecDetails();
 		} catch (IOException e) {
-			return null;
+			e.printStackTrace();
+			throw new FatalFlora2Error(e);
 		}
 	}
 }

@@ -1,23 +1,25 @@
 package app.Model.Operations;
 
+import app.Model.ComposedOperation;
+import app.Model.Operation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Step {
     @JsonIgnore
-    private Class operationClass;
+    private ComposedOperation operation;
     private boolean optional;
 
-    public Step(Class operation, boolean optional) {
-        operationClass = operation;
+    public Step(ComposedOperation operation, boolean optional) {
+        this.operation = operation;
         this.optional = optional;
     }
 
-    public Class getOperationClass() {
-        return operationClass;
+    public ComposedOperation getOperationClass() {
+        return operation;
     }
 
-    public void setOperation(Class operation) {
-        operationClass = operation;
+    public void setOperation(ComposedOperation operation) {
+        this.operation = operation;
     }
 
     public boolean isOptional() {
@@ -29,6 +31,6 @@ public class Step {
     }
 
     public String getOperation() {
-        return operationClass.getSimpleName();
+        return operation.getConcreteType();
     }
 }

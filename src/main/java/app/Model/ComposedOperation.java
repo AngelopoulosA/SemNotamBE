@@ -2,6 +2,7 @@ package app.Model;
 
 import app.Model.Operations.Step;
 import app.Repository.ContextDBRepository;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -37,11 +38,16 @@ public abstract class ComposedOperation extends Operation {
         this.operations = operations;
     }
 
+    @JsonIgnore
     public abstract Step[] getAllowedOperations();
 
-    public boolean checkIfAllowed (Operation operation) {
+    public boolean checkIfAllowed (ComposedOperation operation, User user) {
         Step[] allowedOperations = getAllowedOperations();
-        return Arrays.asList(allowedOperations).stream().filter(s -> s.getOperationClass() == operation.getClass()).findFirst().isPresent();
+        boolean generally = Arrays.asList(allowedOperations).stream()
+                .filter(s -> s.getOperationClass().getClass() == operation.getClass())
+                .findFirst()
+                .isPresent();
+        return generally && operation.canBeExecutedBy() == user.getRole();
     }
 
     public ComposedOperation findCurrentOperation() {
@@ -56,11 +62,25 @@ public abstract class ComposedOperation extends Operation {
         return this;
     }
 
-    public List<Message> generateMessages() {
+    public List<Message> generateMessages(ContextDBRepository contextDBRepository) {
         return new LinkedList<>();
     }
 
     public boolean onExecuted(ContextDBRepository contextDBRepository) {
         return true;
+    }
+
+    public abstract Role canBeExecutedBy();
+
+    public boolean isFatalErrorSomewhere() {
+        boolean fatalError = this.isFatalError();
+        for (Operation o: operations) {
+            if(o.isExecuted() == false) {
+                if (o instanceof ComposedOperation) {
+                    fatalError = fatalError || ((ComposedOperation) o).isFatalErrorSomewhere();
+                }
+            }
+        }
+        return fatalError;
     }
 }

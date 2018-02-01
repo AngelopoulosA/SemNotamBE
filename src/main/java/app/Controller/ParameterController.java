@@ -1,9 +1,10 @@
 package app.Controller;
 
+import app.Model.ComposedOperation;
+import app.Model.FatalFlora2Error;
 import app.Model.Flora2.Parameter;
-import app.Model.Operations.AddParameterValue;
-import app.Model.Operations.SplitContext;
-import app.Model.Operations.UpdateParameter;
+import app.Model.Operation;
+import app.Model.Operations.*;
 import app.Repository.ComposedOperationLogic;
 import app.Repository.Flora2Repository;
 import app.Model.Flora2.ParameterValue;
@@ -33,7 +34,8 @@ public class ParameterController {
         try (Flora2Repository fl = new Flora2Repository()) {
             return fl.getParameters().stream().map(p -> new Parameter(p)).collect(Collectors.toList());
         } catch (IOException e) {
-            return null;
+            e.printStackTrace();
+            throw new FatalFlora2Error(e);
         }
 	}
 
@@ -41,40 +43,11 @@ public class ParameterController {
     public @ResponseBody
     Parameter getParameterDetails (@PathVariable(value="id") String id) {
         try (Flora2Repository fl = new Flora2Repository()) {
-            List<String[]> rawParamValuesHierarchy = fl.getParameterValuesHiearchy(id);
+            return fl.getParameterDetails(id);
 
-            Parameter parameter = new Parameter(id);
-            if(rawParamValuesHierarchy.size() > 0) {
-                Map<String, ParameterValue> parameterValues = new HashMap<>();
-                for (String[] hierarchy : rawParamValuesHierarchy) {
-                    ParameterValue parent = parameterValues.get(hierarchy[0]);
-                    if(parent == null) {
-                        parent = new ParameterValue(hierarchy[0]);
-                        parameterValues.put(parent.getName(), parent);
-                    }
-                    ParameterValue child = parameterValues.get(hierarchy[1]);
-                    if(child == null) {
-                        child = new ParameterValue(hierarchy[1]);
-                        parameterValues.put(child.getName(), child);
-                    }
-                    parent.getChildren().add(child);
-                    child.getParents().add(parent);
-                }
-                ParameterValue root = parameterValues.values().stream().filter(pv -> pv.getParents().isEmpty()).findFirst().get();
-                parameter.setParameterValueHierarchy(root);
-            } else {
-                List<String> parameterValues = fl.getParameterParameterValues(id);
-                if(parameterValues.size() == 1) { // Parameter has only one value and thus no hierarchy
-                    parameter.setParameterValueHierarchy(new ParameterValue(parameterValues.get(0)));
-                } else {
-                    return null;
-                }
-            }
-
-            parameter.setDetParamValue(fl.getDetParamValue(id));
-            return parameter;
         } catch (IOException e) {
-            return null;
+            e.printStackTrace();
+            throw new FatalFlora2Error(e);
         }
     }
 
@@ -94,15 +67,18 @@ public class ParameterController {
             return parametersWithValues;
 
         } catch (IOException e) {
-            return null;
+            e.printStackTrace();
+            throw new FatalFlora2Error(e);
         }
     }
 
     @PostMapping(path="")
     public @ResponseBody
-    Parameter addParameter (@RequestBody Parameter parameter) {
+    Parameter addParameter (@RequestBody Parameter parameter, @RequestHeader("User") Long user) {
+        ComposedOperation operation = null;
         try (Flora2Repository fl = new Flora2Repository()) {
-
+            operation = new AddParameter(parameter);
+            composedOperationLogic.checkAndStartOperation(fl, operation, user);
             String detParamValueDef = parameter.getDetParamValue().stream().collect(Collectors.joining("\r\n"));
             fl.addParameter(parameter.getName(), parameter.getParameterValueHierarchy().getName(), detParamValueDef);
 
@@ -110,30 +86,34 @@ public class ParameterController {
             fl.restart();
             return getParameterDetails(parameter.getName());
         } catch (Exception e) {
+            composedOperationLogic.handleFatalError(operation);
             e.printStackTrace();
-            return null;
+            throw new FatalFlora2Error(e);
         }
     }
 
     @DeleteMapping(path="/{id}")
     public @ResponseBody
-    boolean deleteParameter (@PathVariable(value="id") String id) {
+    boolean deleteParameter (@PathVariable(value="id") String id, @RequestHeader("User") Long user) {
         try (Flora2Repository fl = new Flora2Repository()) {
-
-            boolean result = fl.delParameter(id);
-            return result;
+            if (composedOperationLogic.checkAndStartOperation(fl, new DeleteParameter(fl.getParameterDetails(id)), user)) {
+                boolean result = fl.delParameter(id);
+                return result;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
+        return false;
     }
 
     @PutMapping(path="/{id}")
     public @ResponseBody
     Parameter updateParameterDetParamValue (@PathVariable(value="id") String id, @RequestBody Parameter parameter, @RequestHeader("User") Long user) {
+        ComposedOperation operation = null;
         try (Flora2Repository fl = new Flora2Repository()) {
-
-            if (composedOperationLogic.checkAndStartOperation(fl, new UpdateParameter(parameter), user)) {
+            operation = new UpdateParameter(parameter);
+            if (composedOperationLogic.checkAndStartOperation(fl, operation, user)) {
                 String detParamValueDef = parameter.getDetParamValue().stream().collect(Collectors.joining("\r\n"));
                 fl.updateDetParamValue(id, detParamValueDef);
 
@@ -142,7 +122,9 @@ public class ParameterController {
                 return getParameterDetails(parameter.getName());
             }
         } catch (Exception e) {
+            composedOperationLogic.handleFatalError(operation);
             e.printStackTrace();
+            throw new FatalFlora2Error(e);
         }
         return null;
     }
@@ -169,13 +151,17 @@ public class ParameterController {
 
     @DeleteMapping(path="/{id}/{valueId}")
     public @ResponseBody
-    Parameter deleteParameterValue (@PathVariable(value="id") String parameterId, @PathVariable(value="valueId") String parameterValueId) {
+    Parameter deleteParameterValue (@PathVariable(value="id") String parameterId, @PathVariable(value="valueId") String parameterValueId, @RequestHeader("User") Long user) {
         try (Flora2Repository fl = new Flora2Repository()) {
-
-            boolean result = fl.delParameterValue(parameterValueId);
-            if(result) {
+            if (composedOperationLogic.checkAndStartOperation(fl, new DeleteParameterValue(parameterId, parameterValueId), user)) {
+                boolean result = fl.delParameterValue(parameterValueId);
+                if(result) {
+                    return getParameterDetails(parameterId);
+                }
+            } else {
                 return getParameterDetails(parameterId);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

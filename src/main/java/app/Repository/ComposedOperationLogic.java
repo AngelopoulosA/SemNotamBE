@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
@@ -28,7 +29,17 @@ public class ComposedOperationLogic {
         this.messageRepository = messageRepository;
     }
 
-    public boolean checkAndStartOperation(Flora2Repository fl, ComposedOperation operation, Long userId) throws Exception {
+    /**
+     * Checks if a certain Operation would be allowed within the current pending Operation.
+     * Creates the Messages for this Operation.
+     * Saves the Operation.
+     * @param fl
+     * @param operation
+     * @param userId
+     * @return true whether this Operation has no Messages and therefore the actual execution can be done immediately
+     * @throws IOException
+     */
+    public boolean checkAndStartOperation(Flora2Repository fl, ComposedOperation operation, Long userId) throws IOException {
         User user = userRepository.findOne(userId);
         if(user == null) {
             throw new InvalidUserException();
@@ -39,13 +50,13 @@ public class ComposedOperationLogic {
         ComposedOperation pending = getPendingOperation();
         if (pending == null) {
             fl.startTransaction();
-        } else if (pending.checkIfAllowed(operation)) {
+        } else if (pending.checkIfAllowed(operation, user)) {
             operation.setParent(pending);
             operation.setParentId(pending.getId());
         } else {
             throw new InvalidOperationException();
         }
-        List<Message> messages = operation.generateMessages();
+        List<Message> messages = operation.generateMessages(contextDBRepository);
         messageRepository.save(messages);
         operationRepository.save(operation);
         for (Message m : messages) {
@@ -65,7 +76,10 @@ public class ComposedOperationLogic {
         return false;
     }
 
-
+    /**
+     * Gets the currently Pending Operation (first non executed one in the Tree) if existing
+     * @return null if no Pending Operation exits
+     */
     public ComposedOperation getPendingOperation () {
         ComposedOperation root = composedOperationRepository.findFirstByParentIsNull();
         if(root != null) {
@@ -74,10 +88,17 @@ public class ComposedOperationLogic {
         return null;
     }
 
+    /**
+     * Acknowledges a SendMessage Operation and finishes the Parent Operation when this was the last Message for it.
+     * Adds an AcknowledgeMessage Operation to the pending Parent Operation.
+     * @param sendMessage
+     * @param userId
+     * @return false if the SendMessage can't be Acknowledged at the moment (because it is not Pending)
+     */
     public boolean acknowledgeMessage(SendMessage sendMessage, Long userId) {
         ComposedOperation pending = getPendingOperation();
         ComposedOperation parent = sendMessage.getParent();
-        if (pending.getId() == parent.getId()) {
+        if (pending.getId() == parent.getId()) { // We can only acknowledge (Send)Messages, which are direct childs of the Pending Operation
             sendMessage.setExecuted(true);
             boolean allAcknowledged = parent.getOperations().stream()
                     .allMatch(o -> o.isExecuted());
@@ -99,5 +120,15 @@ public class ComposedOperationLogic {
             return false;
         }
 
+    }
+
+    /**
+     * handles a Fatal Flora2 Error (possible Syntax Error) and sets FatalError for this Operation
+     * @param operation
+     */
+    public void handleFatalError(ComposedOperation operation) {
+        operation.setFatalError(true);
+        operation.setExecuted(false);
+        operationRepository.save(operation);
     }
 }
