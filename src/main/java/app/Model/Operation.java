@@ -7,7 +7,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by Anna on 11.12.2017.
+ * Base class for all Operations.
+ * Defines all the Fields necessary that are necessary for displaying Operations in the FE
  */
 @Entity
 public abstract class Operation {
@@ -139,7 +140,17 @@ public abstract class Operation {
 
     public abstract String getAbstractType();
 
+    /**
+     * Defines the verb of the Operation (e.g. ADD)
+     * Necessary for the FE
+     * @return
+     */
     public abstract String getVerb();
 
+    /**
+     * Defines the Affected Element of the Operation (e.g. Context)
+     * Necessary for the FE
+     * @return
+     */
     public abstract String getAffectedElementType();
 }

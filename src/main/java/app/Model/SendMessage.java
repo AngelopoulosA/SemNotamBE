@@ -7,6 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import java.util.Date;
 
+/**
+ * Special Operation that defines when a Message is sent for a given Parent Operation
+ */
 @Entity
 public class SendMessage extends Operation {
     @OneToOne()
