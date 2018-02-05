@@ -143,7 +143,7 @@ public class ContextController {
                     return getContextDetails(id);
                 }
             }
-            return getContextDetails(id); //TODO Exception
+            throw new FatalFlora2Error();
 
         } catch (Exception e) {
             e.printStackTrace();
